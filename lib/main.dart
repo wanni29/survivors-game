@@ -3,6 +3,7 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/parallax.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:survivors_game/components/enemy.dart';
@@ -32,6 +33,9 @@ class MyGame extends FlameGame
 
   @override
   Future<void> onLoad() async {
+    // 사운드 캐시 다운로드 시키기
+    await FlameAudio.audioCache.loadAll(['hit.mp3']);
+
     // 배경 추가하기
     final parallax = await loadParallaxComponent(
       [ParallaxImageData('background.jpg')],

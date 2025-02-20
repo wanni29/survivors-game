@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
   flame: 1.22.0 # 안정화된 버전으로 진행
+  flame_audio: ^2.0.4  # 사운드 패키지
 
 dev_dependencies:
   flutter_test:
@@ -21,7 +22,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+  # 이미지 
   - assets/images/player.jpg
   - assets/images/heart.png
   - assets/images/enemy.png
   - assets/images/background.jpg
+
+  # 사운드
+  - assets/audio/hit.mp3

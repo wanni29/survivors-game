@@ -1,6 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:survivors_game/components/enemy.dart';
 import 'package:survivors_game/main.dart';
@@ -27,6 +28,9 @@ class Player extends SpriteComponent
 
       // 넉백 시작 -> 조작 막기
       isKnockback = true;
+
+      // 충돌 효과음
+      FlameAudio.play('hit.mp3');
 
       // 충돌 방향 계산
       Vector2 knockbackDirection = (position - other.position).normalized();
