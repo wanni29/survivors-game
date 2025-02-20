@@ -17,6 +17,8 @@ class MyGame extends FlameGame
   late Player player;
   late Enemy enermy;
   Vector2 moveDirection = Vector2.zero();
+  List<SpriteComponent> hearts = [];
+  int playerHealth = 3; // 플레이어 체력 3
 
   @override
   Future<void> onLoad() async {
@@ -41,6 +43,9 @@ class MyGame extends FlameGame
       position: size / 2,
     );
     add(enermy);
+
+    // 하트 UI 추가
+    _addHearts();
   }
 
   @override
@@ -79,5 +84,28 @@ class MyGame extends FlameGame
     super.update(dt);
     // 캐릭터 이동 속도
     player.position += moveDirection * 200 * dt;
+  }
+
+  void _addHearts() async {
+    for (var i = 0; i < 3; i++) {
+      final heart = SpriteComponent()
+        ..sprite = await loadSprite('heart.png')
+        ..size = Vector2(80, 80)
+        ..position = Vector2(size.x - (85 * (i + 1)), 10); // 우측 상단 정렬
+      hearts.add(heart);
+      add(heart);
+    }
+  }
+
+  void decreaseHealth() {
+    if (playerHealth > 0) {
+      playerHealth--;
+      remove(hearts[playerHealth]);
+      debugPrint('체력 감소! 남은 체력 : $playerHealth');
+    }
+    if (playerHealth == 0) {
+      debugPrint('게임 오버!');
+      // 게임 오버 화면
+    }
   }
 }
