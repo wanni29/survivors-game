@@ -72,11 +72,6 @@ class MyGame extends FlameGame
   @override
   KeyEventResult onKeyEvent(
       KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    // 넉백 중이면 키 입력 무시
-    // if (player.isKnockback) {
-    //   return KeyEventResult.handled;
-    // }
-
     moveDirection = Vector2.zero();
     double moveSpeed = 1.65;
 
