@@ -5,14 +5,17 @@ import 'package:flame/input.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:survivors_game/components/enemy.dart';
+import 'package:survivors_game/components/player.dart';
 
 void main() {
   runApp(GameWidget(game: MyGame()));
 }
 
-class MyGame extends FlameGame with PanDetector, KeyboardEvents {
-  late SpriteComponent player;
-  late SpriteComponent enermy;
+class MyGame extends FlameGame
+    with HasCollisionDetection, PanDetector, KeyboardEvents {
+  late Player player;
+  late Enemy enermy;
   Vector2 moveDirection = Vector2.zero();
 
   @override
@@ -26,17 +29,17 @@ class MyGame extends FlameGame with PanDetector, KeyboardEvents {
     add(parallax);
 
     // 캐릭터 추가하기
-    player = SpriteComponent()
-      ..sprite = await loadSprite('player.jpg')
-      ..size = Vector2(50, 50)
-      ..position = size / 4;
+    player = Player(
+      sprite: await loadSprite('player.jpg'),
+      position: size / 4,
+    );
     add(player);
 
     // 적 추가하기
-    enermy = SpriteComponent()
-      ..sprite = await loadSprite('enermy.png')
-      ..size = Vector2(50, 65)
-      ..position = size / 2;
+    enermy = Enemy(
+      sprite: await loadSprite('enemy.png'),
+      position: size / 2,
+    );
     add(enermy);
   }
 
