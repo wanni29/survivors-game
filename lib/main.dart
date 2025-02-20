@@ -7,9 +7,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:survivors_game/components/enemy.dart';
 import 'package:survivors_game/components/player.dart';
+import 'package:survivors_game/screens/game_over_screen.dart';
 
 void main() {
-  runApp(GameWidget(game: MyGame()));
+  runApp(
+    GameWidget(
+      game: MyGame(),
+      overlayBuilderMap: {
+        'GameOver': (context, game) => GameOverScreen(game: game as MyGame)
+      },
+    ),
+  );
 }
 
 class MyGame extends FlameGame
@@ -104,8 +112,32 @@ class MyGame extends FlameGame
       debugPrint('체력 감소! 남은 체력 : $playerHealth');
     }
     if (playerHealth == 0) {
-      debugPrint('게임 오버!');
       // 게임 오버 화면
+      debugPrint('게임 오버!');
+
+      // 게임 오버 UI 표시
+      overlays.add('GameOver');
+
+      // 게임 일시정지
+      pauseEngine();
     }
+  }
+
+  void resetGame() async {
+    // 체력 초기화
+    playerHealth = 3;
+
+    // 하트 다시 추가
+    hearts.clear();
+    _addHearts();
+
+    // 플레이어 위치 초기화
+    player.position = size / 4;
+
+    // 적 위치 초기화
+    enermy.position = size / 2;
+
+    // 🔹 엔진 다시 실행
+    resumeEngine();
   }
 }
