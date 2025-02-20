@@ -155,11 +155,21 @@ class MyGame extends FlameGame
     hearts.clear();
     _addHearts();
 
-    // 플레이어 위치 초기화
-    player.position = size / 4;
+    // 가비지 데이터 제거 및 새로운 객체 생성
+    remove(player);
+    remove(enermy);
 
-    // 적 위치 초기화
-    enermy.position = size / 2;
+    player = Player(
+      sprite: await loadSprite('player.jpg'),
+      position: Vector2(size.x / 4, size.y / 4),
+    );
+    add(player);
+
+    enermy = Enemy(
+      sprite: await loadSprite('enemy.png'),
+      position: Vector2(size.x / 2, size.y / 2),
+    );
+    add(enermy);
 
     // 🔹 엔진 다시 실행
     resumeEngine();
