@@ -14,7 +14,9 @@ void main() {
     GameWidget(
       game: MyGame(),
       overlayBuilderMap: {
-        'GameOver': (context, game) => GameOverScreen(game: game as MyGame)
+        'GameOver': (context, game) => GameOverScreen(game: game as MyGame),
+        'RedFlash': (context, game) =>
+            Container(color: Colors.red.withOpacity(0.3))
       },
     ),
   );
@@ -26,7 +28,7 @@ class MyGame extends FlameGame
   late Enemy enermy;
   Vector2 moveDirection = Vector2.zero();
   List<SpriteComponent> hearts = [];
-  int playerHealth = 3; // 플레이어 체력 3
+  int playerHealth = 4; // 플레이어 체력 3
 
   @override
   Future<void> onLoad() async {
@@ -58,12 +60,19 @@ class MyGame extends FlameGame
 
   @override
   void onPanUpdate(DragUpdateInfo info) {
-    player.position.add(info.delta.global);
+    if (!player.isKnockback) {
+      player.position.add(info.delta.global);
+    }
   }
 
   @override
   KeyEventResult onKeyEvent(
       KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    // 넉백 중이면 키 입력 무시
+    // if (player.isKnockback) {
+    //   return KeyEventResult.handled;
+    // }
+
     moveDirection = Vector2.zero();
     double moveSpeed = 1.65;
 
@@ -108,7 +117,11 @@ class MyGame extends FlameGame
   void decreaseHealth() {
     if (playerHealth > 0) {
       playerHealth--;
-      remove(hearts[playerHealth]);
+
+      if (playerHealth >= 1) {
+        remove(hearts[playerHealth - 1]);
+      }
+
       debugPrint('체력 감소! 남은 체력 : $playerHealth');
     }
     if (playerHealth == 0) {
@@ -123,9 +136,21 @@ class MyGame extends FlameGame
     }
   }
 
+  // 빨간색 오버레이 표시 함수
+  void showRedFlash() {
+    overlays.add('RedFlash'); // 빨간 화면 추가
+
+    // 0.3초 후에 자동으로 사라지게 함
+    add(TimerComponent(
+        period: 0.5,
+        onTick: () {
+          overlays.remove('RedFlash');
+        }));
+  }
+
   void resetGame() async {
     // 체력 초기화
-    playerHealth = 3;
+    playerHealth = 4;
 
     // 하트 다시 추가
     hearts.clear();
