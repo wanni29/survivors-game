@@ -92,6 +92,10 @@ class MyGame extends FlameGame
       moveDirection.y = moveSpeed;
     }
 
+    if (keysPressed.contains(LogicalKeyboardKey.space)) {
+      // 공격기 구현하기
+    }
+
     return KeyEventResult.handled; // 반드시 결과값을 반환해야 함
   }
 

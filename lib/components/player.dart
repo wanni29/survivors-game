@@ -9,6 +9,7 @@ import 'package:survivors_game/main.dart';
 class Player extends SpriteComponent
     with CollisionCallbacks, HasGameRef<MyGame> {
   bool isKnockback = false; // 넉백 상태 변수 추가
+  late SpriteAnimationComponent attackAnimationComponent; // 공격 애니메이션 추가
 
   Player({required Sprite sprite, required Vector2 position})
       : super(sprite: sprite, size: Vector2(50, 50), position: position);
