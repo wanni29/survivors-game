@@ -35,7 +35,7 @@ class MyGame extends FlameGame
   @override
   Future<void> onLoad() async {
     // 사운드 캐시 다운로드 시키기
-    await FlameAudio.audioCache.loadAll(['hit.mp3']);
+    await FlameAudio.audioCache.loadAll(['collision.mp3', 'hit.mp3']);
 
     // 배경 추가하기
     final parallax = await loadParallaxComponent(
@@ -57,7 +57,7 @@ class MyGame extends FlameGame
       sprite: await loadSprite('enemy.png'),
       position: size / 2,
     );
-    // add(enermy);
+    add(enermy);
 
     // 하트 UI 추가
     _addHearts();

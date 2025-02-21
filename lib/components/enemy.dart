@@ -9,9 +9,11 @@ class Enemy extends SpriteComponent
   Enemy({required Sprite sprite, required Vector2 position})
       : super(sprite: sprite, size: Vector2(50, 65), position: position);
 
-  // 적 이동 속도
-  double moveSpeed = 100.0;
+  double moveSpeed = 100.0; // 적 이동 속도
   late TimerComponent jumpTimer; // 점프 주기를 관리하는 타이머
+  bool isKnockback = false;
+  Vector2 knockbackDirection = Vector2.zero(); // 넉백 방향
+  double knockbackStrength = 350.0; // 넉백 강도
 
   @override
   Future<void> onLoad() async {
@@ -28,14 +30,35 @@ class Enemy extends SpriteComponent
   }
 
   @override
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other.runtimeType.toString() == 'SpriteAnimationComponent') {
+      Vector2 knockbackDirection = (position - other.position).normalized();
+      applyKnockback(knockbackDirection);
+    }
+    super.onCollisionStart(intersectionPoints, other);
+  }
+
+  @override
   void update(double dt) {
     super.update(dt);
 
-    // 플레이어의 위치를 추적하여 이동
-    Vector2 direction = (gameRef.player.position - position).normalized();
-    position.add(direction * moveSpeed * dt); // 천천히 플레이어에게 이동
+    if (isKnockback) {
+      // 넉백 상태일 때, 넉백 방향으로 이동
+      position.add(knockbackDirection * knockbackStrength * dt);
+
+      // 넉백 시간이 지나면 넉백 상태 해제
+      Future.delayed(Duration(milliseconds: 200), () {
+        isKnockback = false; // 넉백 종료
+      });
+    } else {
+      // 플레이어의 위치를 추적하여 이동
+      Vector2 direction = (gameRef.player.position - position).normalized();
+      position.add(direction * moveSpeed * dt); // 천천히 플레이어에게 이동
+    }
   }
 
+  // 적의 이동기
   void jumpTowardsPlayer() {
     // 플레이어 방향 계산
     Vector2 playerPos = gameRef.player.position;
@@ -52,17 +75,14 @@ class Enemy extends SpriteComponent
       MoveEffect.to(
         targetPosition + Vector2(0, -jumpHeight), // 위로 점프하면서 앞으로 이동
         EffectController(duration: jumpDuration, curve: Curves.easeOutBack),
-        onComplete: () {
-          // 점프 후 착지 (다시 원래 높이로 돌아옴)
-          // add(
-          //   MoveEffect.to(
-          //     targetPosition, // 착지 위치
-          //     EffectController(
-          //         duration: jumpDuration * 0.8, curve: Curves.easeIn),
-          //   ),
-          // );
-        },
+        onComplete: () {},
       ),
     );
+  }
+
+  // 적의 넉백 당했을시 로직
+  void applyKnockback(Vector2 direction) {
+    isKnockback = true;
+    knockbackDirection = direction.normalized(); // 방향을 정규화
   }
 }

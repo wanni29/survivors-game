@@ -30,4 +30,5 @@ flutter:
   - assets/images/background.jpg
 
   # 사운드
+  - assets/audio/collision.mp3
   - assets/audio/hit.mp3

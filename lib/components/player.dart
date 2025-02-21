@@ -42,7 +42,7 @@ class Player extends SpriteComponent
     if (other is Enemy) {
       debugPrint('플레이어가 적과 충돌했어요!');
       isKnockback = true;
-      FlameAudio.play('hit.mp3');
+      FlameAudio.play('collision.mp3');
 
       Vector2 knockbackDirection = (position - other.position).normalized();
       double knockbackDistance = 100.0;
@@ -69,6 +69,8 @@ class Player extends SpriteComponent
       removeOnFinish: true, // 애니메이션이 끝나면 삭제
     );
 
+    attackComponent.add(RectangleHitbox());
+
     // 빨간색 반짝임 효과 추가
     attackComponent.add(ColorEffect(
       Colors.red.withOpacity(0.5),
@@ -78,6 +80,6 @@ class Player extends SpriteComponent
     gameRef.add(attackComponent);
 
     // 공격 사운드 (나중에 추가)
-    // FlameAudio.play('attack.mp3');
+    FlameAudio.play('hit.mp3');
   }
 }
