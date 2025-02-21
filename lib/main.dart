@@ -30,6 +30,7 @@ class MyGame extends FlameGame
   Vector2 moveDirection = Vector2.zero();
   List<SpriteComponent> hearts = [];
   int playerHealth = 4; // 플레이어 체력 3
+  bool spacePressed = false; // 연타 방지 로직 (변수값)
 
   @override
   Future<void> onLoad() async {
@@ -56,7 +57,7 @@ class MyGame extends FlameGame
       sprite: await loadSprite('enemy.png'),
       position: size / 2,
     );
-    add(enermy);
+    // add(enermy);
 
     // 하트 UI 추가
     _addHearts();
@@ -88,15 +89,30 @@ class MyGame extends FlameGame
     }
 
     if (keysPressed.contains(LogicalKeyboardKey.arrowDown)) {
-      // 수정된 부분
       moveDirection.y = moveSpeed;
     }
 
-    if (keysPressed.contains(LogicalKeyboardKey.space)) {
-      // 공격기 구현하기
+    if (keysPressed.contains(LogicalKeyboardKey.space) && !player.isAttacking) {
+      // 스페이스 키가 눌렸고, 공격 중이 아니면 공격을 시작
+      spacePressed = true;
     }
 
-    return KeyEventResult.handled; // 반드시 결과값을 반환해야 함
+    if (spacePressed && !keysPressed.contains(LogicalKeyboardKey.space)) {
+      // 스페이스 키를 뗐을 때 공격이 실행됨
+      if (!player.isAttacking) {
+        player.attack();
+        player.isAttacking = true; // 공격 상태로 변경
+
+        // 공격이 끝나면 다시 공격 가능하도록 설정
+        Future.delayed(Duration(milliseconds: 150), () {
+          player.isAttacking = false; // 공격이 끝난 후 다시 공격 가능
+        });
+      }
+      spacePressed = false; // 키를 떼었으므로 상태 초기화
+    }
+
+    // 반드시 결과값을 반환해야 함
+    return KeyEventResult.handled;
   }
 
   @override

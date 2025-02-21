@@ -25,6 +25,7 @@ flutter:
   # 이미지 
   - assets/images/player.jpg
   - assets/images/heart.png
+  - assets/images/hit.png
   - assets/images/enemy.png
   - assets/images/background.jpg
 

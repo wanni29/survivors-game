@@ -9,7 +9,8 @@ import 'package:survivors_game/main.dart';
 class Player extends SpriteComponent
     with CollisionCallbacks, HasGameRef<MyGame> {
   bool isKnockback = false; // 넉백 상태 변수 추가
-  late SpriteAnimationComponent attackAnimationComponent; // 공격 애니메이션 추가
+  bool isAttacking = false; // 공격 중인지 확인하는 변수
+  late SpriteAnimation attackAnimation;
 
   Player({required Sprite sprite, required Vector2 position})
       : super(sprite: sprite, size: Vector2(50, 50), position: position);
@@ -18,44 +19,65 @@ class Player extends SpriteComponent
   Future<void> onLoad() async {
     // 충돌 판정을 위한 히트박스 추가
     add(RectangleHitbox());
+
+    // 공격 애니메이션 불러오기 (2줄짜리 이미지 대응)
+    final spriteSheet = await gameRef.images.load('hit.png');
+
+    attackAnimation = SpriteAnimation.fromFrameData(
+      spriteSheet,
+      SpriteAnimationData.variable(
+        amount: 10, // 프레임 수 (두 줄에 각 5프레임씩, 총 10프레임)
+        stepTimes: List.filled(10, 0.03), // 각 프레임의 stepTime을 동일하게 0.05초로 설정
+        textureSize: Vector2(64, 64), // 각 프레임의 크기
+        amountPerRow: 5, // 한 줄에 5개의 프레임이 있다
+        texturePosition: Vector2(0, 0), // 시트의 시작 위치 (0,0)
+        loop: false, // 애니메이션이 반복되도록 설정
+      ),
+    );
   }
 
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is Enemy) {
-      // 충돌시 넉백 효과 구현하기
       debugPrint('플레이어가 적과 충돌했어요!');
-
-      // 넉백 시작 -> 조작 막기
       isKnockback = true;
-
-      // 충돌 효과음
       FlameAudio.play('hit.mp3');
 
-      // 충돌 방향 계산
       Vector2 knockbackDirection = (position - other.position).normalized();
-
-      // 넉백 거리 설정(너무 멀리 튕기지 않도록 조절)
       double knockbackDistance = 100.0;
 
-      // 애니메이션 효과로 넉백이 너무 갑작스럽게 이루어지는것을 막음(자연스럽게!)
       add(
-        MoveEffect.to(
-            position + knockbackDirection * knockbackDistance, // 목표 위치
-            EffectController(
-                duration: 0.5, curve: Curves.easeOutBack), // 0.3초 동안 부드럽게 이동
+        MoveEffect.to(position + knockbackDirection * knockbackDistance,
+            EffectController(duration: 0.5, curve: Curves.easeOutBack),
             onComplete: () {
-          isKnockback = false; // 넉백 끝 -> 다시 조작 가능
+          isKnockback = false;
         }),
       );
 
-      // 충돌 및 피격 시 빨간색 화면 깜빡이기
       (gameRef as MyGame).showRedFlash();
-
-      // 체력 감소 함수 호출
       (gameRef as MyGame).decreaseHealth();
     }
     super.onCollisionStart(intersectionPoints, other);
+  }
+
+  void attack() {
+    final attackComponent = SpriteAnimationComponent(
+      animation: attackAnimation,
+      size: Vector2(120, 120), // 공격 애니메이션 크기 조정
+      position: position + Vector2(-35, -50), // 플레이어 위치 기준으로 배치
+      removeOnFinish: true, // 애니메이션이 끝나면 삭제
+    );
+
+    // 빨간색 반짝임 효과 추가
+    attackComponent.add(ColorEffect(
+      Colors.red.withOpacity(0.5),
+      EffectController(duration: 0.3, alternate: true),
+    ));
+
+    gameRef.add(attackComponent);
+
+    // 공격 사운드 (나중에 추가)
+    // FlameAudio.play('attack.mp3');
   }
 }
