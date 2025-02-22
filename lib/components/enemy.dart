@@ -84,5 +84,7 @@ class Enemy extends SpriteComponent
   void applyKnockback(Vector2 direction) {
     isKnockback = true;
     knockbackDirection = direction.normalized(); // 방향을 정규화
+
+    gameRef.enemyHit(20);
   }
 }

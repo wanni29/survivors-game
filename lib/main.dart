@@ -7,8 +7,10 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:survivors_game/components/enemy.dart';
+import 'package:survivors_game/components/health_bar.dart';
 import 'package:survivors_game/components/player.dart';
 import 'package:survivors_game/screens/game_over_screen.dart';
+import 'package:survivors_game/screens/victory_screen.dart';
 
 void main() {
   runApp(
@@ -16,8 +18,9 @@ void main() {
       game: MyGame(),
       overlayBuilderMap: {
         'GameOver': (context, game) => GameOverScreen(game: game as MyGame),
+        'Victory': (context, game) => VictoryScreen(game: game as MyGame),
         'RedFlash': (context, game) =>
-            Container(color: Colors.red.withOpacity(0.3))
+            Container(color: Colors.red.withOpacity(0.3)),
       },
     ),
   );
@@ -27,6 +30,7 @@ class MyGame extends FlameGame
     with HasCollisionDetection, PanDetector, KeyboardEvents {
   late Player player;
   late Enemy enermy;
+  late HealthBar healthBar;
   Vector2 moveDirection = Vector2.zero();
   List<SpriteComponent> hearts = [];
   int playerHealth = 4; // 플레이어 체력 3
@@ -58,6 +62,12 @@ class MyGame extends FlameGame
       position: size / 2,
     );
     add(enermy);
+
+    // 적 체력바 추가하기
+    healthBar = HealthBar(maxHealth: 100, currentHealth: 100)
+      ..position = Vector2(0, size.y - 20) // 화면 하단에 배치
+      ..size = Vector2(size.x, 20); // 전체 가로 너비
+    add(healthBar);
 
     // 하트 UI 추가
     _addHearts();
@@ -133,6 +143,7 @@ class MyGame extends FlameGame
     }
   }
 
+  // player 체력 감소
   void decreaseHealth() {
     if (playerHealth > 0) {
       playerHealth--;
@@ -151,6 +162,22 @@ class MyGame extends FlameGame
       overlays.add('GameOver');
 
       // 게임 일시정지
+      pauseEngine();
+    }
+  }
+
+  // 적 체력 감소
+  void enemyHit(double damage) {
+    healthBar.updateHealth(damage);
+
+    if (healthBar.currentHealth == 0) {
+      // 게임 승리
+      debugPrint('게임 승리');
+
+      // 게임 승리  UI 표시
+      overlays.add('Victory');
+
+      // 게임 일시 정지
       pauseEngine();
     }
   }
@@ -178,6 +205,7 @@ class MyGame extends FlameGame
     // 가비지 데이터 제거 및 새로운 객체 생성
     remove(player);
     remove(enermy);
+    remove(healthBar);
 
     player = Player(
       sprite: await loadSprite('player.jpg'),
@@ -190,6 +218,11 @@ class MyGame extends FlameGame
       position: Vector2(size.x / 2, size.y / 2),
     );
     add(enermy);
+
+    healthBar = HealthBar(maxHealth: 100, currentHealth: 100)
+      ..position = Vector2(0, size.y - 20) // 화면 하단에 배치
+      ..size = Vector2(size.x, 20);
+    add(healthBar);
 
     // 🔹 엔진 다시 실행
     resumeEngine();
