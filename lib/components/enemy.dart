@@ -87,4 +87,6 @@ class Enemy extends SpriteComponent
 
     gameRef.enemyHit(20);
   }
+
+  // 적이  플레이어에게 공격당했을시 떨림 효과 넣기 -> (선택 사항 : 적이 떨리게할것인가? / 화면이 떨리게 할것인가?)
 }
