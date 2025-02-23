@@ -15,6 +15,9 @@ class Enemy extends SpriteComponent
   Vector2 knockbackDirection = Vector2.zero(); // 넉백 방향
   double knockbackStrength = 350.0; // 넉백 강도
 
+  late ExclamationMark exclamationMark;
+  bool isHit = false; // 피격 상태 여부
+
   @override
   Future<void> onLoad() async {
     // 적도 히트 박스 추가
@@ -27,6 +30,18 @@ class Enemy extends SpriteComponent
       onTick: jumpTowardsPlayer,
     );
     add(jumpTimer);
+
+    // 빨간 느낌표 추가 (기본적으로 숨겨져 있음)
+    exclamationMark = ExclamationMark(
+      text: ' ❗️ ',
+      position: Vector2(5, -35),
+      textRenderer: TextPaint(
+        style: const TextStyle(
+            color: Colors.red, fontSize: 30, fontWeight: FontWeight.w400),
+      ),
+    );
+    add(exclamationMark);
+    exclamationMark.isVisible = false;
   }
 
   @override
@@ -80,13 +95,59 @@ class Enemy extends SpriteComponent
     );
   }
 
-  // 적의 넉백 당했을시 로직
+// 적의 넉백 당했을시 로직
   void applyKnockback(Vector2 direction) {
     isKnockback = true;
     knockbackDirection = direction.normalized(); // 방향을 정규화
 
     gameRef.enemyHit(20);
-  }
 
-  // 적이  플레이어에게 공격당했을시 떨림 효과 넣기 -> (선택 사항 : 적이 떨리게할것인가? / 화면이 떨리게 할것인가?)
+    // 피격시 빨간 느낌표 표시
+    exclamationMark.isVisible = true;
+
+    // 일정 시간 후 느낌표 숨기기
+    Future.delayed(Duration(seconds: 1), () {
+      exclamationMark.isVisible = false;
+    });
+
+    add(
+      SequenceEffect([
+        // 넉백 이동 효과
+        MoveByEffect(Vector2(6, 0), EffectController(duration: 0.04)),
+        MoveByEffect(Vector2(-12, 0), EffectController(duration: 0.04)),
+        MoveByEffect(Vector2(10, 0), EffectController(duration: 0.04)),
+        MoveByEffect(Vector2(-8, 0), EffectController(duration: 0.04)),
+        MoveByEffect(Vector2(6, 0), EffectController(duration: 0.04)),
+        MoveByEffect(Vector2(-4, 0), EffectController(duration: 0.04)),
+      ]),
+    );
+
+    // 넉백 상태 해제는 SequenceEffect의 마지막에 처리
+    Future.delayed(Duration(milliseconds: 200), () {
+      isKnockback = false; // 넉백 종료
+    });
+  }
+}
+
+// 이건 다른 클래스임... 나중에 리펙토링 꼭하자 킹받네.
+class ExclamationMark extends TextComponent {
+  bool isVisible;
+
+  ExclamationMark({
+    required String text,
+    required Vector2 position,
+    required TextPaint textRenderer,
+    this.isVisible = false,
+  }) : super(
+          text: text,
+          position: position,
+          textRenderer: textRenderer,
+        );
+
+  @override
+  void render(Canvas canvas) {
+    if (isVisible) {
+      super.render(canvas); // isVisible이 true일 때만 그리기
+    }
+  }
 }

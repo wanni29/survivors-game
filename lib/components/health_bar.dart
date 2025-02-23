@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
 
 class HealthBar extends PositionComponent {
@@ -25,5 +26,13 @@ class HealthBar extends PositionComponent {
   // 체력을 업데이트하는 메서드
   void updateHealth(double damage) {
     currentHealth = (currentHealth - damage).clamp(0, maxHealth);
+    add(SequenceEffect([
+      MoveByEffect(Vector2(2, 0), EffectController(duration: 0.05)),
+      MoveByEffect(Vector2(-4, 0), EffectController(duration: 0.05)),
+      MoveByEffect(Vector2(2, 0), EffectController(duration: 0.05)),
+      MoveByEffect(Vector2(2, 0), EffectController(duration: 0.05)),
+      MoveByEffect(Vector2(-4, 0), EffectController(duration: 0.05)),
+      MoveByEffect(Vector2(2, 0), EffectController(duration: 0.05)),
+    ]));
   }
 }
