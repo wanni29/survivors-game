@@ -102,6 +102,7 @@ class MyGame extends FlameGame
       moveDirection.y = moveSpeed;
     }
 
+    // -- 공격 코드 --
     if (keysPressed.contains(LogicalKeyboardKey.space) && !player.isAttacking) {
       // 스페이스 키가 눌렸고, 공격 중이 아니면 공격을 시작
       spacePressed = true;
@@ -120,6 +121,16 @@ class MyGame extends FlameGame
       }
       spacePressed = false; // 키를 떼었으므로 상태 초기화
     }
+    // -- 공격 코드 --
+
+    // -- 방어 코드 --
+    if (keysPressed.contains(LogicalKeyboardKey.shiftLeft) &&
+        !player.isAttacking) {
+      player.isBlocking = true;
+    } else {
+      player.isBlocking = false;
+    }
+    // -- 방어 코드 --
 
     // 반드시 결과값을 반환해야 함
     return KeyEventResult.handled;

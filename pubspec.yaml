@@ -26,9 +26,11 @@ flutter:
   - assets/images/player.jpg
   - assets/images/heart.png
   - assets/images/hit.png
+  - assets/images/block.png
   - assets/images/enemy.png
   - assets/images/background.jpg
 
   # 사운드
   - assets/audio/collision.mp3
   - assets/audio/hit.mp3
+  # - assets/audio/block.mp3
