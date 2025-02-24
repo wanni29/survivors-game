@@ -90,7 +90,6 @@ class Player extends SpriteComponent
         );
 
         block();
-        FlameAudio.play('block.mp3');
       }
     }
     super.onCollisionStart(intersectionPoints, other);

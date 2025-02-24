@@ -16,6 +16,7 @@ class Enemy extends SpriteComponent
   double knockbackStrength = 350.0; // 넉백 강도
 
   late ExclamationMark exclamationMark;
+  late ExclamationMark questionMark;
   bool isHit = false; // 피격 상태 여부
 
   @override
@@ -42,6 +43,17 @@ class Enemy extends SpriteComponent
     );
     add(exclamationMark);
     exclamationMark.isVisible = false;
+
+    questionMark = ExclamationMark(
+      text: ' ❓ ',
+      position: Vector2(5, -35),
+      textRenderer: TextPaint(
+        style: const TextStyle(
+            color: Colors.red, fontSize: 30, fontWeight: FontWeight.w400),
+      ),
+    );
+    add(questionMark);
+    questionMark.isVisible = false;
   }
 
   @override
@@ -100,15 +112,28 @@ class Enemy extends SpriteComponent
     isKnockback = true;
     knockbackDirection = direction.normalized(); // 방향을 정규화
 
-    gameRef.enemyHit(20);
+    // 플레이어가 공격중일때
+    if (gameRef.player.isAttacking) {
+      gameRef.enemyHit(20);
 
-    // 피격시 빨간 느낌표 표시
-    exclamationMark.isVisible = true;
+      // 피격시 빨간 느낌표 표시
+      exclamationMark.isVisible = true;
 
-    // 일정 시간 후 느낌표 숨기기
-    Future.delayed(Duration(seconds: 1), () {
-      exclamationMark.isVisible = false;
-    });
+      // 일정 시간 후 느낌표 숨기기
+      Future.delayed(Duration(seconds: 1), () {
+        exclamationMark.isVisible = false;
+      });
+    } else if (gameRef.player.isBlocking) {
+      gameRef.enemyHit(0);
+
+      // 피격시 빨간 느낌표 표시
+      questionMark.isVisible = true;
+
+      // 일정 시간 후 느낌표 숨기기
+      Future.delayed(Duration(seconds: 1), () {
+        questionMark.isVisible = false;
+      });
+    }
 
     add(
       SequenceEffect([
