@@ -50,6 +50,14 @@ class MyGame extends FlameGame
 
 </div>
 
+<div style="border: 1px solid #4CAF50; padding: 10px; border-radius: 5px;">
+[2025.02.24.월요일 18:35분] 픽셀아트를 만들수 있어야 할것 같음, 그림을 그리는 작업이기는 하다만은, 계속 해서 게임을 만들어 나감에 있어 필수적으로 알아야 할것 같음
+<br/>
+
+현재 테크트리는 [flutter 기초] -> [flutter 응용(flame패키지)] -> [픽셀 아트 기초]  
+오늘 저녁에 픽셀아트 튜토리얼 및 입문자 영상 강의 어떤거 따라 배울지 정하고 시작하기
+</div>
+
 
 
 
