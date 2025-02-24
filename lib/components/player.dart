@@ -130,6 +130,6 @@ class Player extends SpriteComponent
     gameRef.add(blockComponent);
 
     // 방어 사운드
-    // FlameAudio.play('block.mp3');
+    FlameAudio.play('block.mp3');
   }
 }

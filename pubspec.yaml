@@ -33,4 +33,4 @@ flutter:
   # 사운드
   - assets/audio/collision.mp3
   - assets/audio/hit.mp3
-  # - assets/audio/block.mp3
+  - assets/audio/block.mp3
