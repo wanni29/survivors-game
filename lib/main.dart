@@ -166,6 +166,7 @@ class MyGame extends FlameGame
 
       debugPrint('체력 감소! 남은 체력 : $playerHealth');
     }
+
     if (playerHealth == 0) {
       // 게임 오버 화면
       debugPrint('게임 오버!');
