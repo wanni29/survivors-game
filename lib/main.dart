@@ -11,20 +11,29 @@ import 'package:survivors_game/components/health_bar.dart';
 import 'package:survivors_game/components/player.dart';
 import 'package:survivors_game/screens/game_over_screen.dart';
 import 'package:survivors_game/screens/victory_screen.dart';
+import 'package:survivors_game/test_world.dart';
 
+// 테스팅용
 void main() {
-  runApp(
-    GameWidget(
-      game: MyGame(),
-      overlayBuilderMap: {
-        'GameOver': (context, game) => GameOverScreen(game: game as MyGame),
-        'Victory': (context, game) => VictoryScreen(game: game as MyGame),
-        'RedFlash': (context, game) =>
-            Container(color: Colors.red.withOpacity(0.3)),
-      },
-    ),
-  );
+  runApp(GameWidget(
+    game: TestWorld(),
+  ));
 }
+
+// 게임 제작용
+// void main() {
+//   runApp(
+//     GameWidget(
+//       game: MyGame(),
+//       overlayBuilderMap: {
+//         'GameOver': (context, game) => GameOverScreen(game: game as MyGame),
+//         'Victory': (context, game) => VictoryScreen(game: game as MyGame),
+//         'RedFlash': (context, game) =>
+//             Container(color: Colors.red.withOpacity(0.3)),
+//       },
+//     ),
+//   );
+// }
 
 class MyGame extends FlameGame
     with HasCollisionDetection, PanDetector, KeyboardEvents {

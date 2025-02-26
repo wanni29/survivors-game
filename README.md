@@ -59,6 +59,4 @@ class MyGame extends FlameGame
 </div>
 
 
-
-
-
+ㅋㅋㅋㅋㅋ 아 방향성 잃음...뭐해야할지 모르겠음... ㅠㅠㅠ
