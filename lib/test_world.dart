@@ -4,19 +4,19 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 class TestWorld extends FlameGame {
-  late AnimationImage animationImage;
+  late AnimationImageTest animationImageTest;
   @override
   Future<void> onLoad() async {
-    add(AnimationRectangle());
+    // add(AnimationRectangle());
 
-    animationImage = AnimationImage(
+    animationImageTest = AnimationImageTest(
       sprite: await loadSprite('enemy.png'),
-      position: size / 2,
+      position: size / 4,
     );
-    add(animationImage);
+    add(animationImageTest);
   }
 }
 
@@ -80,63 +80,96 @@ class AnimationRectangle extends PositionComponent {
   }
 }
 
-// 흐헝 객체하나 띄우기가 이렇게 어렵니 ㅠㅠㅠㅠ
-class AnimationImage extends SpriteComponent {
+class AnimationImageTest extends SpriteComponent {
+  double lineWidth = 0; // 빨간 선 길이
+  final double maxLineWidth = 100; // 빨간 선 최종 길이
+  final double speed = 40; // 선이 증가하는 속도
+  bool isSplitting = false; // 분리 여부
   double splitOffset = 0; // 이미지가 분리될 때 양쪽으로 벌어지는 정도
   final double splitSpeed = 50; // 분리 속도
-  final double maxSplitOffset = 50; // 최대 분리 정도 (이미지 크기의 반)
-  final double gap = 10; // 이미지 간 간격
+  final double gap = 10; // 이미지 사이 간격
 
-  AnimationImage({required Sprite sprite, required Vector2 position})
-      : super(sprite: sprite, size: Vector2(100, 100), position: position);
+  AnimationImageTest({required Sprite sprite, required Vector2 position})
+      : super(
+            sprite: sprite,
+            size: Vector2(100, 100),
+            position: position,
+            paint: Paint()
+              ..colorFilter = ColorFilter.mode(Colors.blue, BlendMode.srcATop));
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
 
-    // 이미지 크기
-    final imageWidth = sprite!.image.width!.toDouble();
-    final imageHeight = sprite!.image.height!.toDouble();
+    final srcSize = sprite!.srcSize;
+    final image = sprite!.image;
 
-    // 왼쪽 반 이미지 영역
-    Rect leftHalf = Rect.fromLTWH(0, 0, imageWidth / 2, imageHeight);
+    // 빨간 선을 그리기 위해
+    final paint = Paint()
+      ..color = Colors.red
+      ..strokeWidth = 4;
 
-    // 오른쪽 반 이미지 영역
-    Rect rightHalf =
-        Rect.fromLTWH(imageWidth / 2, 0, imageWidth / 2, imageHeight);
+    // **ColorFilter를 사용하여 이미지 위에 파란색을 덧씌우기**
+    final blueFilter =
+        ColorFilter.mode(Colors.blue, BlendMode.srcATop); // 파란색 덧씌우기
 
-    // 왼쪽 반 이미지 그리기 (왼쪽에 간격을 띄워서)
-    canvas.drawImageRect(
-        sprite!.image,
-        leftHalf,
-        Rect.fromLTWH(position.x - splitOffset - gap, position.y,
-            imageWidth / 2, imageHeight),
-        Paint());
+    // 파란색 필터를 적용해서 이미지 그리기
+    final bluePaint = Paint()..colorFilter = blueFilter;
 
-    // 전체 이미지 그리기 (가운데에 위치)
-    canvas.drawImage(sprite!.image, position.toOffset(), Paint());
+    // 빨간 선 그리기
+    if (!isSplitting) {
+      canvas.drawLine(
+        Offset(size.x / 2, 0),
+        Offset(size.x / 2, lineWidth),
+        paint,
+      );
+    } else {
+      // 이미지가 분리되어 왼쪽과 오른쪽으로 벌어짐
+      Rect leftTarget = Rect.fromLTWH(
+          position.x - splitOffset - gap, position.y, size.x / 2, size.y);
+      Rect rightTarget = Rect.fromLTWH(
+          position.x + splitOffset + gap, position.y, size.x / 2, size.y);
 
-    // 오른쪽 반 이미지 그리기 (오른쪽에 간격을 띄워서)
-    canvas.drawImageRect(
-        sprite!.image,
-        rightHalf,
-        Rect.fromLTWH(position.x + splitOffset + gap, position.y,
-            imageWidth / 2, imageHeight),
-        Paint());
+      // 왼쪽 반 그리기
+      canvas.save(); // 캔버스를 저장
+      canvas.clipRect(leftTarget); // 왼쪽 반만 잘라서 그리기
+      canvas.drawImageRect(
+        image,
+        ui.Rect.fromLTWH(0, 0, srcSize.x / 2, srcSize.y),
+        leftTarget,
+        bluePaint,
+      );
+      canvas.restore(); // 캔버스 복원
 
-    // 좌표값 로깅
-    log('Left X: ${position.x - splitOffset - gap}, Y: ${position.y}');
-    log('Center X: ${position.x}, Y: ${position.y}');
-    log('Right X: ${position.x + splitOffset + gap}, Y: ${position.y}');
+      // 오른쪽 반 그리기
+      canvas.save(); // 캔버스를 저장
+      canvas.clipRect(rightTarget); // 오른쪽 반만 잘라서 그리기
+      canvas.drawImageRect(
+        image,
+        ui.Rect.fromLTWH(srcSize.x / 2, 0, srcSize.x / 2, srcSize.y),
+        rightTarget,
+        bluePaint,
+      );
+      canvas.restore(); // 캔버스 복원
+    }
   }
 
   @override
   void update(double dt) {
     super.update(dt);
 
-    // 이미지를 좌우로 벌리기 위한 애니메이션
-    if (splitOffset < maxSplitOffset) {
-      splitOffset += splitSpeed * dt;
+    // 선이 그려지는 모션
+    if (!isSplitting) {
+      if (lineWidth < maxLineWidth) {
+        lineWidth += speed * dt;
+      } else {
+        isSplitting = true; // 선이 다 그려지면 분리 애니메이션 시작
+      }
+    } else {
+      // 이미지가 좌우로 벌어짐
+      if (splitOffset < size.x / 2) {
+        splitOffset += splitSpeed * dt;
+      }
     }
   }
 }
