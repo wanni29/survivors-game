@@ -32,6 +32,7 @@ class AnimationImage extends SpriteComponent {
             sprite: sprite,
             size: Vector2(100, 100),
             position: position,
+            anchor: Anchor.center,
             paint: Paint()
               ..colorFilter = ColorFilter.mode(Colors.blue, BlendMode.srcATop));
 
@@ -61,11 +62,11 @@ class AnimationImage extends SpriteComponent {
       );
     } else {
       // 이미지가 분리되어 왼쪽과 오른쪽으로 벌어진다.
-      Rect leftTarget = Rect.fromLTWH(
-          position.x - splitOffset - gap, position.y, size.x / 2, size.y);
+      Rect leftTarget =
+          Rect.fromLTWH(20 - splitOffset - gap, 0, size.x / 2, size.y);
 
-      Rect rightTarget = Rect.fromLTWH(
-          position.x + splitOffset + gap, position.y, size.x / 2, size.y);
+      Rect rightTarget =
+          Rect.fromLTWH(20 + splitOffset + gap, 0, size.x / 2, size.y);
 
       // 왼쪽 반 그리기
       canvas.save(); // 캔버스를 저장

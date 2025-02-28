@@ -7,11 +7,9 @@ class TestWorld extends FlameGame {
   late AnimationImage animationImage;
   @override
   Future<void> onLoad() async {
-    add(AnimationRectangle());
-
     animationImage = AnimationImage(
       sprite: await loadSprite('enemy.png'),
-      position: size / 4,
+      position: size / 2,
     );
     add(animationImage);
   }
