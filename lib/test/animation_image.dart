@@ -25,6 +25,9 @@ class AnimationImage extends SpriteComponent {
   // 이미지 사이 간격
   final double gap = 10;
 
+  // 이미지가 보이는지 여부
+  bool isVisible = true;
+
   AnimationImage({
     required Sprite sprite,
     required Vector2 position,
@@ -52,9 +55,13 @@ class AnimationImage extends SpriteComponent {
     final paintBlue = Paint()
       ..colorFilter = ColorFilter.mode(Colors.blue, BlendMode.srcATop);
 
-    // 빨간선 그리기
-    if (!isSplitting) {
-      // Offset이라는 것은 '기준점'을 의미한다.
+    // 투명선
+    final paintTransparent = Paint()
+      ..colorFilter = ColorFilter.mode(Colors.transparent, BlendMode.srcATop);
+
+    // isVisible이 true일 때는 기존 이미지를 그리지 않음
+    if (isVisible && !isSplitting) {
+      // 빨간선만 그리기
       canvas.drawLine(
         Offset(size.x / 2, 0), // 시작점
         Offset(size.x / 2, lineWidth), // 끝점
@@ -102,6 +109,9 @@ class AnimationImage extends SpriteComponent {
       } else {
         // 선이 다 그려지면 분리 애니메이션 시작
         isSplitting = true;
+
+        // 기존 이미지는 숨기기
+        isVisible = false;
       }
     } else {
       // 이미지가 좌우로 벌어짐
