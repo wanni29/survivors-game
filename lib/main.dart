@@ -11,7 +11,7 @@ import 'package:survivors_game/components/health_bar.dart';
 import 'package:survivors_game/components/player.dart';
 import 'package:survivors_game/screens/game_over_screen.dart';
 import 'package:survivors_game/screens/victory_screen.dart';
-import 'package:survivors_game/test_world.dart';
+import 'package:survivors_game/test/test_world.dart';
 
 // 테스팅용
 void main() {
