@@ -197,7 +197,7 @@ class MyGame extends FlameGame
       debugPrint('게임 승리');
 
       // 게임 승리  UI 표시
-      Future.delayed(Duration(milliseconds: 2000), () {
+      Future.delayed(Duration(milliseconds: 1800), () {
         overlays.add('Victory');
         // 게임 일시 정지
         pauseEngine();
