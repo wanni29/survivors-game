@@ -27,6 +27,7 @@ class Enemy extends SpriteComponent
   final double speed = 80;
   double splitOffset = 0;
   bool isSplitting = false;
+  bool isDrawingLine = false; // 빨간 선을 그리는 중인지 여부
   final double splitSpeed = 50;
   final double gap = 10;
 
@@ -96,21 +97,28 @@ class Enemy extends SpriteComponent
     }
 
     // 빨간 선 그리기 로직
-    if (isSplitting) {
+    if (isDrawingLine) {
       if (lineWidth < maxLineWidth) {
         lineWidth += speed * dt;
       } else {
         // 선이 다 그려지면 분리 애니메이션 시작
-        if (splitOffset < size.x / 2) {
-          splitOffset += splitSpeed * dt;
-        }
+        isSplitting = true;
+        isDrawingLine = false;
+      }
+    }
+
+    if (isSplitting) {
+      if (splitOffset < size.x / 2) {
+        splitOffset += splitSpeed * dt;
       }
     }
   }
 
   @override
   void render(Canvas canvas) {
-    super.render(canvas);
+    if (!isSplitting) {
+      super.render(canvas);
+    }
 
     final srcSize = sprite!.srcSize;
     final image = sprite!.image;
@@ -124,47 +132,42 @@ class Enemy extends SpriteComponent
     final imageRed = Paint()
       ..colorFilter = ColorFilter.mode(Colors.red, BlendMode.srcATop);
 
-    if (isSplitting) {
+    if (isDrawingLine) {
       // 빨간선 그리기
-      if (lineWidth < maxLineWidth) {
-        canvas.drawLine(
-          Offset(size.x / 2, 0), // 시작점
-          Offset(size.x / 2, lineWidth), // 끝점
-          paintRed,
-        );
-      } else {
-        // 이미지가 분리되어 왼쪽과 오른쪽으로 벌어진다.
-        Rect leftTarget = Rect.fromLTWH(
-            position.x - size.x / 2 - splitOffset - gap,
-            position.y - size.y / 2,
-            size.x / 2,
-            size.y);
+      canvas.drawLine(
+        Offset(size.x / 2, 0), // 시작점
+        Offset(size.x / 2, lineWidth), // 끝점
+        paintRed,
+      );
+    } else if (isSplitting) {
+      // 이미지가 분리되어 왼쪽과 오른쪽으로 벌어진다.
+      Rect leftTarget =
+          Rect.fromLTWH(gap - splitOffset - gap, 0, size.x / 2, size.y);
 
-        Rect rightTarget = Rect.fromLTWH(position.x + splitOffset + gap,
-            position.y - size.y / 2, size.x / 2, size.y);
+      Rect rightTarget =
+          Rect.fromLTWH(gap + splitOffset + gap, 0, size.x / 2, size.y);
 
-        // 왼쪽 반 그리기
-        canvas.save(); // 캔버스를 저장
-        canvas.clipRect(leftTarget); // 왼쪽 반만 잘라서 그리기
-        canvas.drawImageRect(
-          image,
-          ui.Rect.fromLTWH(0, 0, srcSize.x / 2, srcSize.y),
-          leftTarget,
-          imageRed,
-        );
-        canvas.restore(); // 캔버스 복원
+      // 왼쪽 반 그리기
+      canvas.save(); // 캔버스를 저장
+      canvas.clipRect(leftTarget); // 왼쪽 반만 잘라서 그리기
+      canvas.drawImageRect(
+        image,
+        ui.Rect.fromLTWH(0, 0, srcSize.x / 2, srcSize.y),
+        leftTarget,
+        imageRed,
+      );
+      canvas.restore(); // 캔버스 복원
 
-        // 오른쪽 반 그리기
-        canvas.save(); // 캔버스를 저장
-        canvas.clipRect(rightTarget); // 오른쪽 반만 잘라서 그리기
-        canvas.drawImageRect(
-          image,
-          ui.Rect.fromLTWH(srcSize.x / 2, 0, srcSize.x / 2, srcSize.y),
-          rightTarget,
-          imageRed,
-        );
-        canvas.restore(); // 캔버스 복원
-      }
+      // 오른쪽 반 그리기
+      canvas.save(); // 캔버스를 저장
+      canvas.clipRect(rightTarget); // 오른쪽 반만 잘라서 그리기
+      canvas.drawImageRect(
+        image,
+        ui.Rect.fromLTWH(srcSize.x / 2, 0, srcSize.x / 2, srcSize.y),
+        rightTarget,
+        imageRed,
+      );
+      canvas.restore(); // 캔버스 복원
     }
   }
 
