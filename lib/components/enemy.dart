@@ -2,6 +2,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
+import 'package:survivors_game/components/exlamation_mart.dart';
 import 'package:survivors_game/main.dart';
 
 class Enemy extends SpriteComponent
@@ -18,6 +19,15 @@ class Enemy extends SpriteComponent
   late ExclamationMark exclamationMark;
   late ExclamationMark questionMark;
   bool isHit = false; // 피격 상태 여부
+
+  // 적이 죽는 애니메이션과 관련된 변수
+  double lineWidth = 0;
+  final double maxLineWidth = 90;
+  final double speed = 80;
+  double splitOffset = 0;
+  bool isSplitting = false;
+  final double splitSpeed = 50;
+  final double gap = 10;
 
   @override
   Future<void> onLoad() async {
@@ -78,10 +88,36 @@ class Enemy extends SpriteComponent
       Future.delayed(Duration(milliseconds: 200), () {
         isKnockback = false; // 넉백 종료
       });
-    } else {
+    } else if (!isSplitting) {
       // 플레이어의 위치를 추적하여 이동
       Vector2 direction = (gameRef.player.position - position).normalized();
       position.add(direction * moveSpeed * dt); // 천천히 플레이어에게 이동
+    }
+
+    // 빨간 선 그리기 로직
+    if (isSplitting) {
+      if (lineWidth < maxLineWidth) {
+        lineWidth += speed * dt;
+      }
+    }
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+
+    // 빨간선
+    final paintRed = Paint()
+      ..color = Colors.red
+      ..strokeWidth = 4;
+
+    // 빨간선 그리기
+    if (isSplitting) {
+      canvas.drawLine(
+        Offset(size.x / 2, -size.y * 0.3), // 시작점
+        Offset(size.x / 2, lineWidth), // 끝점
+        paintRed,
+      );
     }
   }
 
@@ -114,7 +150,10 @@ class Enemy extends SpriteComponent
 
     // 플레이어가 공격중일때
     if (gameRef.player.isAttacking) {
-      gameRef.enemyHit(20);
+      // gameRef.enemyHit(20);
+
+      // 테스팅용
+      gameRef.enemyHit(100);
 
       // 피격시 빨간 느낌표 표시
       exclamationMark.isVisible = true;
@@ -151,28 +190,5 @@ class Enemy extends SpriteComponent
     Future.delayed(Duration(milliseconds: 200), () {
       isKnockback = false; // 넉백 종료
     });
-  }
-}
-
-// 이건 다른 클래스임... 나중에 리펙토링 꼭하자 킹받네.
-class ExclamationMark extends TextComponent {
-  bool isVisible;
-
-  ExclamationMark({
-    required String text,
-    required Vector2 position,
-    required TextPaint textRenderer,
-    this.isVisible = false,
-  }) : super(
-          text: text,
-          position: position,
-          textRenderer: textRenderer,
-        );
-
-  @override
-  void render(Canvas canvas) {
-    if (isVisible) {
-      super.render(canvas); // isVisible이 true일 때만 그리기
-    }
   }
 }

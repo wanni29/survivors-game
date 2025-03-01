@@ -2,8 +2,9 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
+import 'package:survivors_game/main.dart';
 
-class HealthBar extends PositionComponent {
+class HealthBar extends PositionComponent with HasGameRef<MyGame> {
   double maxHealth;
   double currentHealth;
 
@@ -26,13 +27,19 @@ class HealthBar extends PositionComponent {
   // 체력을 업데이트하는 메서드
   void updateHealth(double damage) {
     currentHealth = (currentHealth - damage).clamp(0, maxHealth);
-    add(SequenceEffect([
-      MoveByEffect(Vector2(2, 0), EffectController(duration: 0.05)),
-      MoveByEffect(Vector2(-4, 0), EffectController(duration: 0.05)),
-      MoveByEffect(Vector2(2, 0), EffectController(duration: 0.05)),
-      MoveByEffect(Vector2(2, 0), EffectController(duration: 0.05)),
-      MoveByEffect(Vector2(-4, 0), EffectController(duration: 0.05)),
-      MoveByEffect(Vector2(2, 0), EffectController(duration: 0.05)),
-    ]));
+
+    if (currentHealth == 0) {
+      // 적이 반으로 쪼개지는 애니메이션 시작
+      gameRef.enermy.isSplitting = true;
+    } else {
+      add(SequenceEffect([
+        MoveByEffect(Vector2(2, 0), EffectController(duration: 0.05)),
+        MoveByEffect(Vector2(-4, 0), EffectController(duration: 0.05)),
+        MoveByEffect(Vector2(2, 0), EffectController(duration: 0.05)),
+        MoveByEffect(Vector2(2, 0), EffectController(duration: 0.05)),
+        MoveByEffect(Vector2(-4, 0), EffectController(duration: 0.05)),
+        MoveByEffect(Vector2(2, 0), EffectController(duration: 0.05)),
+      ]));
+    }
   }
 }

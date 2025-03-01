@@ -14,26 +14,26 @@ import 'package:survivors_game/screens/victory_screen.dart';
 import 'package:survivors_game/test/test_world.dart';
 
 // 테스팅용
-void main() {
-  runApp(GameWidget(
-    game: TestWorld(),
-  ));
-}
+// void main() {
+//   runApp(GameWidget(
+//     game: TestWorld(),
+//   ));
+// }
 
 // 게임 제작용
-// void main() {
-//   runApp(
-//     GameWidget(
-//       game: MyGame(),
-//       overlayBuilderMap: {
-//         'GameOver': (context, game) => GameOverScreen(game: game as MyGame),
-//         'Victory': (context, game) => VictoryScreen(game: game as MyGame),
-//         'RedFlash': (context, game) =>
-//             Container(color: Colors.red.withOpacity(0.3)),
-//       },
-//     ),
-//   );
-// }
+void main() {
+  runApp(
+    GameWidget(
+      game: MyGame(),
+      overlayBuilderMap: {
+        'GameOver': (context, game) => GameOverScreen(game: game as MyGame),
+        'Victory': (context, game) => VictoryScreen(game: game as MyGame),
+        'RedFlash': (context, game) =>
+            Container(color: Colors.red.withOpacity(0.3)),
+      },
+    ),
+  );
+}
 
 class MyGame extends FlameGame
     with HasCollisionDetection, PanDetector, KeyboardEvents {
@@ -197,10 +197,11 @@ class MyGame extends FlameGame
       debugPrint('게임 승리');
 
       // 게임 승리  UI 표시
-      overlays.add('Victory');
-
-      // 게임 일시 정지
-      pauseEngine();
+      Future.delayed(Duration(milliseconds: 2000), () {
+        overlays.add('Victory');
+        // 게임 일시 정지
+        pauseEngine();
+      });
     }
   }
 

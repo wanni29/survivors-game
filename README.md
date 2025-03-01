@@ -51,6 +51,14 @@ class MyGame extends FlameGame
 </div>
 
 <div style="border: 1px solid #4CAF50; padding: 10px; border-radius: 5px;">
+[2025.03.01.토요일 23:40분] 픽셀아트를 만들수 있어야 할것 같음, 그림을 그리는 작업이기는 하다만은, 계속 해서 게임을 만들어 나감에 있어 필수적으로 알아야 할것 같음
+<br/>
+
+현재 테크트리는 [flutter 기초] -> [flutter 응용(flame패키지)] -> [픽셀 아트 기초]  
+오늘 저녁에 픽셀아트 튜토리얼 및 입문자 영상 강의 어떤거 따라 배울지 정하고 시작하기
+</div>
+
+<div style="border: 1px solid #4CAF50; padding: 10px; border-radius: 5px;">
 [2025.02.24.월요일 18:35분] 픽셀아트를 만들수 있어야 할것 같음, 그림을 그리는 작업이기는 하다만은, 계속 해서 게임을 만들어 나감에 있어 필수적으로 알아야 할것 같음
 <br/>
 
@@ -58,5 +66,14 @@ class MyGame extends FlameGame
 오늘 저녁에 픽셀아트 튜토리얼 및 입문자 영상 강의 어떤거 따라 배울지 정하고 시작하기
 </div>
 
+<div style="border: 1px solid #4CAF50; padding: 10px; border-radius: 5px;">
+[2025.03.01.토요일 23:40분] 중요 개념  onLoad VS render 
 
-ㅋㅋㅋㅋㅋ 아 방향성 잃음...뭐해야할지 모르겠음... ㅠㅠㅠ
+onLoad : 컴포넌트가 로드될때 한 번 호출되며, 리소스를 로드하고 초기설정 수행
+</br>
+(단, onLoad안에서 'add 메소드'의 역할은 update와 render메서드가 자동으로 호출되어 매프레임마다 그리게 된다.)
+
+render : 매 프레임마다 호출되며, 컴포넌트의 시각적 표현을 담당한다.
+</div>
+
+
