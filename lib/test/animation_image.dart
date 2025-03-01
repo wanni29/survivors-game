@@ -50,11 +50,6 @@ class AnimationImage extends SpriteComponent {
     final paintBlue = Paint()
       ..colorFilter = ColorFilter.mode(Colors.blue, BlendMode.srcATop);
 
-    // 투명선
-    final paintTransparent = Paint()
-      ..colorFilter = ColorFilter.mode(Colors.transparent, BlendMode.srcATop);
-
-    // isVisible이 true일 때는 기존 이미지를 그리지 않음
     if (!isSplitting) {
       super.render(canvas);
 

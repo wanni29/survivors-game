@@ -4,6 +4,7 @@ import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
 import 'package:survivors_game/components/exlamation_mart.dart';
 import 'package:survivors_game/main.dart';
+import 'dart:ui' as ui;
 
 class Enemy extends SpriteComponent
     with CollisionCallbacks, HasGameRef<MyGame> {
@@ -98,6 +99,11 @@ class Enemy extends SpriteComponent
     if (isSplitting) {
       if (lineWidth < maxLineWidth) {
         lineWidth += speed * dt;
+      } else {
+        // 선이 다 그려지면 분리 애니메이션 시작
+        if (splitOffset < size.x / 2) {
+          splitOffset += splitSpeed * dt;
+        }
       }
     }
   }
@@ -106,18 +112,59 @@ class Enemy extends SpriteComponent
   void render(Canvas canvas) {
     super.render(canvas);
 
+    final srcSize = sprite!.srcSize;
+    final image = sprite!.image;
+
     // 빨간선
     final paintRed = Paint()
       ..color = Colors.red
       ..strokeWidth = 4;
 
-    // 빨간선 그리기
+    // 이미지에 빨간선 그리기
+    final imageRed = Paint()
+      ..colorFilter = ColorFilter.mode(Colors.red, BlendMode.srcATop);
+
     if (isSplitting) {
-      canvas.drawLine(
-        Offset(size.x / 2, -size.y * 0.3), // 시작점
-        Offset(size.x / 2, lineWidth), // 끝점
-        paintRed,
-      );
+      // 빨간선 그리기
+      if (lineWidth < maxLineWidth) {
+        canvas.drawLine(
+          Offset(size.x / 2, 0), // 시작점
+          Offset(size.x / 2, lineWidth), // 끝점
+          paintRed,
+        );
+      } else {
+        // 이미지가 분리되어 왼쪽과 오른쪽으로 벌어진다.
+        Rect leftTarget = Rect.fromLTWH(
+            position.x - size.x / 2 - splitOffset - gap,
+            position.y - size.y / 2,
+            size.x / 2,
+            size.y);
+
+        Rect rightTarget = Rect.fromLTWH(position.x + splitOffset + gap,
+            position.y - size.y / 2, size.x / 2, size.y);
+
+        // 왼쪽 반 그리기
+        canvas.save(); // 캔버스를 저장
+        canvas.clipRect(leftTarget); // 왼쪽 반만 잘라서 그리기
+        canvas.drawImageRect(
+          image,
+          ui.Rect.fromLTWH(0, 0, srcSize.x / 2, srcSize.y),
+          leftTarget,
+          imageRed,
+        );
+        canvas.restore(); // 캔버스 복원
+
+        // 오른쪽 반 그리기
+        canvas.save(); // 캔버스를 저장
+        canvas.clipRect(rightTarget); // 오른쪽 반만 잘라서 그리기
+        canvas.drawImageRect(
+          image,
+          ui.Rect.fromLTWH(srcSize.x / 2, 0, srcSize.x / 2, srcSize.y),
+          rightTarget,
+          imageRed,
+        );
+        canvas.restore(); // 캔버스 복원
+      }
     }
   }
 
