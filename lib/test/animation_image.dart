@@ -28,7 +28,9 @@ class AnimationImage extends SpriteComponent {
   AnimationImage({
     required Sprite sprite,
     required Vector2 position,
+    required int priority,
   }) : super(
+            priority: priority,
             sprite: sprite,
             size: Vector2(100, 100),
             position: position,
