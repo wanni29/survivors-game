@@ -34,3 +34,4 @@ flutter:
   - assets/audio/collision.mp3
   - assets/audio/hit.mp3
   - assets/audio/block.mp3
+  - assets/audio/final_attack.mp3

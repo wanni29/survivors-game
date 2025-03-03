@@ -49,7 +49,7 @@ class MyGame extends FlameGame
   Future<void> onLoad() async {
     // 사운드 캐시 다운로드 시키기
     await FlameAudio.audioCache
-        .loadAll(['collision.mp3', 'hit.mp3', 'block.mp3']);
+        .loadAll(['collision.mp3', 'hit.mp3', 'block.mp3', 'final_attack.mp3']);
 
     // 배경 추가하기
     final parallax = await loadParallaxComponent(
@@ -193,10 +193,12 @@ class MyGame extends FlameGame
     healthBar.updateHealth(damage);
 
     if (healthBar.currentHealth == 0) {
+      Future.delayed(Duration(milliseconds: 300), () {
+        FlameAudio.play('final_attack.mp3');
+      });
       // 게임 승리
       debugPrint('게임 승리');
 
-      // 게임 승리  UI 표시
       Future.delayed(Duration(milliseconds: 1800), () {
         overlays.add('Victory');
         // 게임 일시 정지

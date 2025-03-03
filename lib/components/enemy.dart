@@ -1,6 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:survivors_game/components/exlamation_mart.dart';
 import 'package:survivors_game/main.dart';
@@ -82,20 +83,6 @@ class Enemy extends SpriteComponent
   void update(double dt) {
     super.update(dt);
 
-    if (isKnockback) {
-      // 넉백 상태일 때, 넉백 방향으로 이동
-      position.add(knockbackDirection * knockbackStrength * dt);
-
-      // 넉백 시간이 지나면 넉백 상태 해제
-      Future.delayed(Duration(milliseconds: 200), () {
-        isKnockback = false; // 넉백 종료
-      });
-    } else if (!isSplitting) {
-      // 플레이어의 위치를 추적하여 이동
-      Vector2 direction = (gameRef.player.position - position).normalized();
-      position.add(direction * moveSpeed * dt); // 천천히 플레이어에게 이동
-    }
-
     // 빨간 선 그리기 로직
     if (isDrawingLine) {
       if (lineWidth < maxLineWidth) {
@@ -111,6 +98,20 @@ class Enemy extends SpriteComponent
       if (splitOffset < size.x / 2) {
         splitOffset += splitSpeed * dt;
       }
+    }
+
+    if (isKnockback) {
+      // 넉백 상태일 때, 넉백 방향으로 이동
+      position.add(knockbackDirection * knockbackStrength * dt);
+
+      // 넉백 시간이 지나면 넉백 상태 해제
+      Future.delayed(Duration(milliseconds: 200), () {
+        isKnockback = false; // 넉백 종료
+      });
+    } else if (!isSplitting) {
+      // 플레이어의 위치를 추적하여 이동
+      Vector2 direction = (gameRef.player.position - position).normalized();
+      position.add(direction * moveSpeed * dt); // 천천히 플레이어에게 이동
     }
   }
 
