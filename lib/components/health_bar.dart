@@ -31,6 +31,7 @@ class HealthBar extends PositionComponent with HasGameRef<MyGame> {
     if (currentHealth == 0) {
       // 적이 반으로 쪼개지는 애니메이션 시작
       gameRef.enermy.isDrawingLine = true;
+      gameRef.enermy.canMove = false;
     } else {
       add(SequenceEffect([
         MoveByEffect(Vector2(2, 0), EffectController(duration: 0.05)),

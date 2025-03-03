@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -31,6 +33,8 @@ class Enemy extends SpriteComponent
   bool isDrawingLine = false; // 빨간 선을 그리는 중인지 여부
   final double splitSpeed = 50;
   final double gap = 10;
+
+  bool canMove = true; // 적이 움직일 수 있는지 여부
 
   @override
   Future<void> onLoad() async {
@@ -73,6 +77,7 @@ class Enemy extends SpriteComponent
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other.runtimeType.toString() == 'SpriteAnimationComponent') {
+      log('여기를 확인해보자 : ${other.runtimeType.toString()} ');
       Vector2 knockbackDirection = (position - other.position).normalized();
       applyKnockback(knockbackDirection);
     }
@@ -108,7 +113,7 @@ class Enemy extends SpriteComponent
       Future.delayed(Duration(milliseconds: 200), () {
         isKnockback = false; // 넉백 종료
       });
-    } else if (!isSplitting) {
+    } else if (!isSplitting && canMove) {
       // 플레이어의 위치를 추적하여 이동
       Vector2 direction = (gameRef.player.position - position).normalized();
       position.add(direction * moveSpeed * dt); // 천천히 플레이어에게 이동
@@ -174,24 +179,27 @@ class Enemy extends SpriteComponent
 
   // 적의 이동기
   void jumpTowardsPlayer() {
-    // 플레이어 방향 계산
-    Vector2 playerPos = gameRef.player.position;
-    Vector2 jumpDirection = (playerPos - position).normalized(); // 플레이어 방향으로 이동
+    if (canMove) {
+      // 플레이어 방향 계산
+      Vector2 playerPos = gameRef.player.position;
+      Vector2 jumpDirection =
+          (playerPos - position).normalized(); // 플레이어 방향으로 이동
 
-    // 점프 높이 & 거리 설정
-    const double jumpDistance = 100.0; // 플레이어 쪽으로 이동하는 거리
-    const double jumpHeight = 50.0; // 점프 높이
-    const double jumpDuration = 0.5; // 점프 속도
+      // 점프 높이 & 거리 설정
+      const double jumpDistance = 100.0; // 플레이어 쪽으로 이동하는 거리
+      const double jumpHeight = 50.0; // 점프 높이
+      const double jumpDuration = 0.5; // 점프 속도
 
-    Vector2 targetPosition = position + jumpDirection * jumpDistance;
+      Vector2 targetPosition = position + jumpDirection * jumpDistance;
 
-    add(
-      MoveEffect.to(
-        targetPosition + Vector2(0, -jumpHeight), // 위로 점프하면서 앞으로 이동
-        EffectController(duration: jumpDuration, curve: Curves.easeOutBack),
-        onComplete: () {},
-      ),
-    );
+      add(
+        MoveEffect.to(
+          targetPosition + Vector2(0, -jumpHeight), // 위로 점프하면서 앞으로 이동
+          EffectController(duration: jumpDuration, curve: Curves.easeOutBack),
+          onComplete: () {},
+        ),
+      );
+    }
   }
 
 // 적의 넉백 당했을시 로직
