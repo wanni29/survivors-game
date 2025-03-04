@@ -23,7 +23,6 @@ class TestWorld extends FlameGame {
     animationImage = AnimationImage(
       sprite: await loadSprite('enemy.png'),
       position: size / 2,
-      priority: 1, // 낮은 우선순위
     );
     add(animationImage);
   }
@@ -32,8 +31,8 @@ class TestWorld extends FlameGame {
   void update(double dt) {
     super.update(dt);
 
-    // 원이 점점 줄어들면서 enemy에게 집중되도록 함
-    if (circleRadius > 130) {
+    // 원이 점점 줄어들도록 함
+    if (circleRadius > 120) {
       circleRadius -= shrinkSpeed * dt;
     }
   }
@@ -41,10 +40,6 @@ class TestWorld extends FlameGame {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-
-    // 검은색 배경 그리기
-    final backgroundPaint = Paint()..color = Colors.black;
-    canvas.drawRect(size.toRect(), backgroundPaint);
 
     // 원의 클리핑 영역 설정
     canvas.save();
@@ -56,14 +51,12 @@ class TestWorld extends FlameGame {
       ..addRect(Rect.fromLTWH(0, 0, size.x, size.y))
       ..fillType = PathFillType.evenOdd;
     canvas.clipPath(path);
-    canvas.drawColor(Colors.transparent, BlendMode.darken);
 
-    // 배경과 이미지를 함께 그리기
-    super.render(canvas);
+    // 배경을 검은색으로 설정
+    final backgroundPaint = Paint()..color = Colors.black;
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.x, size.y), backgroundPaint);
 
-    // 원의 클리핑 영역 해제
+    // 클리핑 영역 해제
     canvas.restore();
   }
-
-  // 이미지가 안나오는 에러 잡아보기!
 }
