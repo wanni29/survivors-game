@@ -64,4 +64,6 @@ class TestWorld extends FlameGame {
     // 원의 클리핑 영역 해제
     canvas.restore();
   }
+
+  // 이미지가 안나오는 에러 잡아보기!
 }
