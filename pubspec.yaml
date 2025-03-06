@@ -11,8 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  flame: 1.22.0 # 안정화된 버전으로 진행
+  flame: ^1.25.0 # 안정화된 버전으로 진행
   flame_audio: ^2.0.4  # 사운드 패키지
+  flame_camera_tools: ^2.0.0 #  카메라 패키지
 
 dev_dependencies:
   flutter_test:

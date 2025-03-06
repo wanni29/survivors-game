@@ -12,11 +12,12 @@ import 'package:survivors_game/components/player.dart';
 import 'package:survivors_game/screens/game_over_screen.dart';
 import 'package:survivors_game/screens/victory_screen.dart';
 import 'package:survivors_game/test/test_world.dart';
+import 'package:survivors_game/test/camera_example.dart';
 
 // 테스팅용
 void main() {
   runApp(GameWidget(
-    game: TestWorld(),
+    game: CameraExample(),
   ));
 }
 

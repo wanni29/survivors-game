@@ -18,5 +18,43 @@ class CloneCodingWorld extends FlameGame {
       repeat: ImageRepeat.repeat,
     );
     add(parallax);
+
+    // 애니메이션 이미지 추가하기
+    animationImage = AnimationImage(
+      sprite: await loadSprite('enemy.png'),
+      position: size / 2,
+    );
+    add(animationImage);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    // 원이 점점 줄어들도록 함
+    if (circleRadius > 120) {
+      circleRadius -= shrinkSpeed * dt;
+    }
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+
+    // 원의 클리핑 영역 설정
+    canvas.save();
+    Path path = Path()
+      ..addOval(Rect.fromCircle(
+          center: animationImage.position.toOffset(), radius: circleRadius))
+      ..addRect(Rect.fromLTWH(0, 0, size.x, size.y))
+      ..fillType = PathFillType.evenOdd;
+    canvas.clipPath(path);
+
+    // 배경은 검은색으로 설정
+    final backgroundPaint = Paint()..color = Colors.black;
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.x, size.y), backgroundPaint);
+
+    // 클리핑 영역 해제
+    canvas.restore();
   }
 }
