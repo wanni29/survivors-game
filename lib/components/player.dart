@@ -15,7 +15,7 @@ class Player extends SpriteComponent
   late SpriteAnimation blocakAnimation;
 
   Player({required Sprite sprite, required Vector2 position})
-      : super(sprite: sprite, size: Vector2(50, 50), position: position);
+      : super(sprite: sprite, size: Vector2(70, 70), position: position);
 
   @override
   Future<void> onLoad() async {

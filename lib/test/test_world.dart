@@ -34,19 +34,19 @@ class TestWorld extends FlameGame {
     );
     world.add(animationImage);
 
-    // camera.viewfinder.position = animationImage.position;
-    // camera.zoomTo(2, duration: 1);
+    camera.viewfinder.position = animationImage.position;
+    camera.zoomTo(2, duration: 1);
   }
 
-  // @override
-  // void update(double dt) {
-  //   super.update(dt);
+  @override
+  void update(double dt) {
+    super.update(dt);
 
-  //   // 원이 점점 줄어들도록 함
-  //   if (circleRadius > 200) {
-  //     circleRadius -= shrinkSpeed * dt;
-  //   }
-  // }
+    // 원이 점점 줄어들도록 함
+    if (circleRadius > 200) {
+      circleRadius -= shrinkSpeed * dt;
+    }
+  }
 
   @override
   void render(Canvas canvas) {

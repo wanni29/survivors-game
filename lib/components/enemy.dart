@@ -12,7 +12,7 @@ import 'dart:ui' as ui;
 class Enemy extends SpriteComponent
     with CollisionCallbacks, HasGameRef<MyGame> {
   Enemy({required Sprite sprite, required Vector2 position})
-      : super(sprite: sprite, size: Vector2(50, 65), position: position);
+      : super(sprite: sprite, size: Vector2(100, 100), position: position);
 
   double moveSpeed = 100.0; // 적 이동 속도
   late TimerComponent jumpTimer; // 점프 주기를 관리하는 타이머
