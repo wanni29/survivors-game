@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'package:survivors_game/test/animation_image.dart';
+import 'package:flame_camera_tools/flame_camera_tools.dart';
 
 class TestWorld extends FlameGame {
   late AnimationImage animationImage;
@@ -10,21 +13,24 @@ class TestWorld extends FlameGame {
   double shrinkSpeed = 500; // 원이 줄어드는 속도
 
   @override
-  Future<void> onLoad() async {
+  FutureOr<void> onLoad() async {
     // 배경 추가하기
     final parallax = await loadParallaxComponent(
       [ParallaxImageData('background.jpg')],
       baseVelocity: Vector2(50, 0), // 천천히 스크롤되는 배경
       repeat: ImageRepeat.repeat,
     );
-    add(parallax);
+    world.add(parallax);
 
     // 애니메이션 이미지 추가하기
     animationImage = AnimationImage(
       sprite: await loadSprite('enemy.png'),
       position: size / 2,
     );
-    add(animationImage);
+    world.add(animationImage);
+
+    camera.viewfinder.position = animationImage.position;
+    camera.zoomTo(2, duration: 1);
   }
 
   @override
@@ -32,7 +38,7 @@ class TestWorld extends FlameGame {
     super.update(dt);
 
     // 원이 점점 줄어들도록 함
-    if (circleRadius > 120) {
+    if (circleRadius > 200) {
       circleRadius -= shrinkSpeed * dt;
     }
   }

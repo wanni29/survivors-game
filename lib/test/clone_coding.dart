@@ -1,60 +1,121 @@
+import 'dart:async';
+
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/parallax.dart';
+import 'package:flame_camera_tools/flame_camera_tools.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:survivors_game/test/animation_image.dart';
 
-class CloneCodingWorld extends FlameGame {
-  late AnimationImage animationImage;
-  double circleRadius = 1000;
-  double shrinkSpeed = 500;
+class CloneCoding extends FlameGame with HasKeyboardHandlerComponents {
+  final player =
+      SomeThing(position: Vector2.all(0), size: Vector2.all(50), player: true);
+
+  final someComponent = RectangleComponent(
+    position: Vector2.all(200),
+    size: Vector2.all(100),
+    paint: Paint()..color = Colors.green,
+  );
 
   @override
-  Future<void> onLoad() async {
-    // 배경추가하기
-    final parallax = await loadParallaxComponent(
-      [ParallaxImageData('background.jpg')],
-      baseVelocity: Vector2(50, 0),
-      repeat: ImageRepeat.repeat,
-    );
-    add(parallax);
+  FutureOr<void> onLoad() {
+    world.add(player);
+    world.add(someComponent);
 
-    // 애니메이션 이미지 추가하기
-    animationImage = AnimationImage(
-      sprite: await loadSprite('enemy.png'),
-      position: size / 2,
-    );
-    add(animationImage);
+    add(ButtonComponent("Follow", Vector2(20, 20), () {
+      camera.smoothFollow(player, stiffness: 2);
+    }));
+
+    add(ButtonComponent("Enemy Follow", Vector2(20, 100), () {
+      camera.smoothFollow(someComponent, stiffness: 2);
+    }));
+
+    add(ButtonComponent("Zoom In", Vector2(20, 180), () {
+      camera.zoomTo(2, duration: 1);
+    }));
+
+    add(ButtonComponent("Zoom Out", Vector2(20, 260), () {
+      camera.zoomTo(1, duration: 1);
+    }));
+
+    return super.onLoad();
+  }
+}
+
+class SomeThing extends RectangleComponent with KeyboardHandler {
+  final bool player;
+
+  SomeThing({super.position, super.size, this.player = false})
+      : super(paint: Paint()..color = Colors.red);
+
+  Set<LogicalKeyboardKey> _keys = {};
+  final double _movementSpeed = 300;
+
+  @override
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    _keys = keysPressed;
+    return super.onKeyEvent(event, keysPressed);
   }
 
   @override
   void update(double dt) {
-    super.update(dt);
+    final direction = Vector2.zero();
 
-    // 원이 점점 줄어들도록 함
-    if (circleRadius > 120) {
-      circleRadius -= shrinkSpeed * dt;
+    if (player) {
+      if (_keys.contains(LogicalKeyboardKey.arrowUp)) {
+        direction.y = -1;
+      }
+      if (_keys.contains(LogicalKeyboardKey.arrowLeft)) {
+        direction.x = -1;
+      }
+      if (_keys.contains(LogicalKeyboardKey.arrowDown)) {
+        direction.y = 1;
+      }
+      if (_keys.contains(LogicalKeyboardKey.arrowRight)) {
+        direction.x = 1;
+      }
     }
+
+    if (!direction.isZero() && player) {
+      direction.normalize();
+      position += direction * _movementSpeed * dt;
+    }
+  }
+}
+
+class ButtonComponent extends PositionComponent with TapCallbacks {
+  final String text;
+  final VoidCallback onTap;
+
+  ButtonComponent(this.text, Vector2 position, this.onTap) {
+    this.position = position;
+    size = Vector2(120, 50);
   }
 
   @override
   void render(Canvas canvas) {
-    super.render(canvas);
+    final paint = Paint()..color = Colors.blue;
+    canvas.drawRect(size.toRect(), paint);
 
-    // 원의 클리핑 영역 설정
-    canvas.save();
-    Path path = Path()
-      ..addOval(Rect.fromCircle(
-          center: animationImage.position.toOffset(), radius: circleRadius))
-      ..addRect(Rect.fromLTWH(0, 0, size.x, size.y))
-      ..fillType = PathFillType.evenOdd;
-    canvas.clipPath(path);
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: const TextStyle(color: Colors.white, fontSize: 14),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    textPainter.paint(
+      canvas,
+      Offset(
+          (size.x - textPainter.width) / 2, (size.y - textPainter.height) / 2),
+    );
+  }
 
-    // 배경은 검은색으로 설정
-    final backgroundPaint = Paint()..color = Colors.black;
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.x, size.y), backgroundPaint);
-
-    // 클리핑 영역 해제
-    canvas.restore();
+  @override
+  void onTapDown(TapDownEvent event) {
+    onTap();
   }
 }
