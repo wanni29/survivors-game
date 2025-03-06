@@ -80,4 +80,16 @@ super.render(canvas)로직을 사용하여 커스터 마이징 한다.
 enemy.dart로직 참고하기!
 </div>
 
+<div style="border: 1px solid #4CAF50; padding: 10px; border-radius: 5px;">
+[2025.03.06.목요일 21:25분]  
+
+카메라 로직을 찾던 도중 flutter flame 패키지 안정화 버전이 나왔다는것을 알게 되었음.
+더 이상 로직을 실행할 'flutter run -d chrome --web-renderer html'을 입력하지 않아도 됨
+flame 버전 '1.25.0' 버전은 안정화가 되었기때문에 cors정책이나 dart:ui 패키지에 대한 메소드를 구현하지 않았다는 에러가 발생하지 않음으로 device를 chrome에 맞춘 뒤 void main() {} 로직에서 run 버튼만 누르면 쉽게 실행이 된다.
+
+카메라 구도에 관한 로직이 flame엔진 공식사이트에는 예제나 로직이 꼼꼼하게 설명 안해두었음.
+뭔가 느낌이 '이런게 있어, 하지만 방법이나 로직은 너희가 알아서 구현해' 라는 느낌이였음. 그렇기 때문에 계속해서 지피티랑 코파일럿을 이용해서 로직을 찾으려 했지만 결국에는 구하지 못했음.
+그런데 pub dev에 나랑 비슷한 경험을 한 사례가 있어서 누군가 이에 대한 패키지를 만들어 두지 않았을까 하는 맘에 보았더니 '  flame_camera_tools: ^2.0.0 ' 패키지가 존재함 camera_example 파일을 참고해서 구현을 진행하면됨. 
+</div>
+
 
