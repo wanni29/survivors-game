@@ -14,13 +14,18 @@ class TestWorld extends FlameGame {
 
   @override
   FutureOr<void> onLoad() async {
-    // 배경 추가하기
-    final parallax = await loadParallaxComponent(
-      [ParallaxImageData('background.jpg')],
-      baseVelocity: Vector2(50, 0), // 천천히 스크롤되는 배경
-      repeat: ImageRepeat.repeat,
-    );
-    world.add(parallax);
+    try {
+      // 배경 추가하기
+      final parallax = await loadParallaxComponent(
+        [ParallaxImageData('background.png')],
+        baseVelocity: Vector2(50, 0), // 천천히 스크롤되는 배경
+        repeat: ImageRepeat.repeat,
+      );
+      world.add(parallax);
+    } catch (e) {
+      // 에러 처리: 이미지가 로드되지 않으면 기본 배경을 설정하거나 로그를 출력
+      print("배경 이미지 로딩 실패: $e");
+    }
 
     // 애니메이션 이미지 추가하기
     animationImage = AnimationImage(
@@ -29,19 +34,19 @@ class TestWorld extends FlameGame {
     );
     world.add(animationImage);
 
-    camera.viewfinder.position = animationImage.position;
-    camera.zoomTo(2, duration: 1);
+    // camera.viewfinder.position = animationImage.position;
+    // camera.zoomTo(2, duration: 1);
   }
 
-  @override
-  void update(double dt) {
-    super.update(dt);
+  // @override
+  // void update(double dt) {
+  //   super.update(dt);
 
-    // 원이 점점 줄어들도록 함
-    if (circleRadius > 200) {
-      circleRadius -= shrinkSpeed * dt;
-    }
-  }
+  //   // 원이 점점 줄어들도록 함
+  //   if (circleRadius > 200) {
+  //     circleRadius -= shrinkSpeed * dt;
+  //   }
+  // }
 
   @override
   void render(Canvas canvas) {

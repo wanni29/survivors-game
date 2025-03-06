@@ -29,7 +29,7 @@ flutter:
   - assets/images/hit.png
   - assets/images/block.png
   - assets/images/enemy.png
-  - assets/images/background.jpg
+  - assets/images/background.png
 
   # 사운드
   - assets/audio/collision.mp3
