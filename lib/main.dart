@@ -1,9 +1,11 @@
+import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/parallax.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:flame_camera_tools/flame_camera_tools.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:survivors_game/components/enemy.dart';
@@ -42,17 +44,21 @@ class MyGame extends FlameGame
   late Player player;
   late Enemy enermy;
   late HealthBar healthBar;
+  late CameraComponent focusCamera;
   Vector2 moveDirection = Vector2.zero();
   List<SpriteComponent> hearts = [];
   int playerHealth = 4; // 플레이어 체력 3
   bool spacePressed = false; // 연타 방지 로직 (변수값)
+
+  // 시네마틱 포커싱 효과
+  double circleRadius = 1000; // 초기 원의 반지름
+  double shrinkSpeed = 650; // 원이 줄어드는 속도
 
   @override
   Future<void> onLoad() async {
     // 사운드 캐시 다운로드 시키기
     await FlameAudio.audioCache
         .loadAll(['collision.mp3', 'hit.mp3', 'block.mp3', 'final_attack.mp3']);
-
     // 배경 추가하기
     final parallax = await loadParallaxComponent(
       [ParallaxImageData('background.png')],
@@ -60,6 +66,12 @@ class MyGame extends FlameGame
       repeat: ImageRepeat.repeat,
     );
     add(parallax);
+
+    focusCamera = CameraComponent.withFixedResolution(
+      width: 1920,
+      height: 1080,
+    )..viewfinder.zoom = 1.0;
+    add(focusCamera); // 카메라를 월드에 추가
 
     // 캐릭터 추가하기
     player = Player(
@@ -153,6 +165,39 @@ class MyGame extends FlameGame
     super.update(dt);
     // 캐릭터 이동 속도
     player.position += moveDirection * 200 * dt;
+
+    // 원이 점점 줄어들도록 함
+    if (circleRadius > 150 && enermy.isFocusing) {
+      circleRadius -= shrinkSpeed * dt;
+    }
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+
+    if (enermy.isFocusing) {
+      focusCamera.viewfinder.position = enermy.position;
+      focusCamera.zoomTo(2, duration: 1);
+
+      // 원의 클리핑 영역 설정
+      canvas.save();
+      Path path = Path()
+        ..addOval(Rect.fromCircle(
+          center: enermy.position.toOffset(),
+          radius: circleRadius,
+        ))
+        ..addRect(Rect.fromLTWH(0, 0, size.x, size.y))
+        ..fillType = PathFillType.evenOdd;
+      canvas.clipPath(path);
+
+      // 배경을 검은색으로 설정
+      final backgroundPaint = Paint()..color = Colors.black;
+      canvas.drawRect(Rect.fromLTWH(0, 0, size.x, size.y), backgroundPaint);
+
+      // 클리핑 영역 해제
+      canvas.restore();
+    }
   }
 
   void _addHearts() async {

@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:survivors_game/components/exlamation_mart.dart';
 import 'package:survivors_game/main.dart';
@@ -29,6 +28,7 @@ class Enemy extends SpriteComponent
   final double maxLineWidth = 90;
   final double speed = 80;
   double splitOffset = 0;
+  bool isFocusing = false;
   bool isSplitting = false;
   bool isDrawingLine = false; // 빨간 선을 그리는 중인지 여부
   final double splitSpeed = 50;
@@ -90,6 +90,7 @@ class Enemy extends SpriteComponent
 
     // 빨간 선 그리기 로직
     if (isDrawingLine) {
+      isFocusing = true;
       if (lineWidth < maxLineWidth) {
         lineWidth += speed * dt;
       } else {
