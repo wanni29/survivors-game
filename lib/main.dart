@@ -59,11 +59,6 @@ class MyGame extends FlameGame
     await FlameAudio.audioCache
         .loadAll(['collision.mp3', 'hit.mp3', 'block.mp3', 'final_attack.mp3']);
 
-    // 보여줄 화면에 대하여 카메라 구도 잡기
-    camera = CameraComponent.withFixedResolution(
-        width: size.x, height: size.y, world: world);
-    camera.viewfinder.anchor = Anchor.topLeft;
-
     // 배경 추가하기
     final parallax =
         await loadParallaxComponent([ParallaxImageData('background.png')],
@@ -71,21 +66,21 @@ class MyGame extends FlameGame
             repeat: ImageRepeat.repeat,
             position: Vector2(0, 0));
 
-    world.add(parallax);
+    add(parallax);
 
     // 캐릭터 추가하기
     player = Player(
       sprite: await loadSprite('player.jpg'),
       position: size / 4,
     );
-    world.add(player);
+    add(player);
 
     // 적 추가하기
     enermy = Enemy(
       sprite: await loadSprite('enemy.png'),
       position: size / 2,
     );
-    world.add(enermy);
+    add(enermy);
 
     // 적 체력바 추가하기
     healthBar = HealthBar(maxHealth: 100, currentHealth: 100)
@@ -167,7 +162,7 @@ class MyGame extends FlameGame
     player.position += moveDirection * 200 * dt;
 
     // 원이 점점 줄어들도록 함
-    if (circleRadius > 200 && enermy.isFocusing) {
+    if (circleRadius > 500 && enermy.isFocusing) {
       circleRadius -= shrinkSpeed * dt;
     }
   }
@@ -177,11 +172,7 @@ class MyGame extends FlameGame
     super.render(canvas);
 
     if (enermy.isFocusing) {
-      // 카메라 뷰포인터를 적의 위치로 이동
-      // camera.viewfinder.position = enermy.position;
-      // camera.zoomTo(2, duration: 1);
       // 원의 클리핑 영역 설정
-
       canvas.save();
       Path path = Path()
         ..addOval(Rect.fromCircle(
@@ -208,7 +199,7 @@ class MyGame extends FlameGame
         ..size = Vector2(80, 80)
         ..position = Vector2(size.x - (85 * (i + 1)), 10); // 우측 상단 정렬
       hearts.add(heart);
-      world.add(heart);
+      add(heart);
     }
   }
 
@@ -218,7 +209,7 @@ class MyGame extends FlameGame
       playerHealth--;
 
       if (playerHealth >= 1) {
-        world.remove(hearts[playerHealth - 1]);
+        remove(hearts[playerHealth - 1]);
       }
 
       debugPrint('체력 감소! 남은 체력 : $playerHealth');
@@ -276,33 +267,27 @@ class MyGame extends FlameGame
     _addHearts();
 
     // 가비지 데이터 제거 및 새로운 객체 생성
-    world.remove(player);
-    world.remove(enermy);
-    world.remove(healthBar);
+    remove(player);
+    remove(enermy);
+    remove(healthBar);
 
     player = Player(
       sprite: await loadSprite('player.jpg'),
       position: Vector2(size.x / 4, size.y / 4),
     );
-    world.add(player);
+    add(player);
 
     enermy = Enemy(
       sprite: await loadSprite('enemy.png'),
       position: Vector2(size.x / 2, size.y / 2),
     );
-    world.add(enermy);
+    add(enermy);
 
     healthBar = HealthBar(maxHealth: 100, currentHealth: 100)
       ..position = Vector2(0, size.y - 20) // 화면 하단에 배치
       ..size = Vector2(size.x, 20);
-    world.add(healthBar);
+    add(healthBar);
 
-    camera = CameraComponent.withFixedResolution(
-        width: size.x, height: size.y, world: world);
-    camera.zoomTo(1.0, duration: 0);
-    camera.viewfinder.anchor = Anchor.topLeft;
-
-    // 🔹 엔진 다시 실행
     resumeEngine();
   }
 }
