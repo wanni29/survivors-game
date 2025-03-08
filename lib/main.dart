@@ -44,7 +44,6 @@ class MyGame extends FlameGame
   late Player player;
   late Enemy enermy;
   late HealthBar healthBar;
-  late CameraComponent focusCamera;
   Vector2 moveDirection = Vector2.zero();
   List<SpriteComponent> hearts = [];
   int playerHealth = 4; // 플레이어 체력 3
@@ -59,39 +58,40 @@ class MyGame extends FlameGame
     // 사운드 캐시 다운로드 시키기
     await FlameAudio.audioCache
         .loadAll(['collision.mp3', 'hit.mp3', 'block.mp3', 'final_attack.mp3']);
-    // 배경 추가하기
-    final parallax = await loadParallaxComponent(
-      [ParallaxImageData('background.png')],
-      baseVelocity: Vector2(50, 0), // 천천히 스크롤되는 배경
-      repeat: ImageRepeat.repeat,
-    );
-    add(parallax);
 
-    focusCamera = CameraComponent.withFixedResolution(
-      width: 1920,
-      height: 1080,
-    )..viewfinder.zoom = 1.0;
-    add(focusCamera); // 카메라를 월드에 추가
+    // 보여줄 화면에 대하여 카메라 구도 잡기
+    camera = CameraComponent.withFixedResolution(
+        width: size.x, height: size.y, world: world);
+    camera.viewfinder.anchor = Anchor.topLeft;
+
+    // 배경 추가하기
+    final parallax =
+        await loadParallaxComponent([ParallaxImageData('background.png')],
+            baseVelocity: Vector2(50, 0), // 천천히 스크롤되는 배경
+            repeat: ImageRepeat.repeat,
+            position: Vector2(0, 0));
+
+    world.add(parallax);
 
     // 캐릭터 추가하기
     player = Player(
       sprite: await loadSprite('player.jpg'),
       position: size / 4,
     );
-    add(player);
+    world.add(player);
 
     // 적 추가하기
     enermy = Enemy(
       sprite: await loadSprite('enemy.png'),
       position: size / 2,
     );
-    add(enermy);
+    world.add(enermy);
 
     // 적 체력바 추가하기
     healthBar = HealthBar(maxHealth: 100, currentHealth: 100)
       ..position = Vector2(0, size.y - 20) // 화면 하단에 배치
       ..size = Vector2(size.x, 20); // 전체 가로 너비
-    add(healthBar);
+    world.add(healthBar);
 
     // 하트 UI 추가
     _addHearts();
@@ -167,7 +167,7 @@ class MyGame extends FlameGame
     player.position += moveDirection * 200 * dt;
 
     // 원이 점점 줄어들도록 함
-    if (circleRadius > 150 && enermy.isFocusing) {
+    if (circleRadius > 200 && enermy.isFocusing) {
       circleRadius -= shrinkSpeed * dt;
     }
   }
@@ -177,10 +177,11 @@ class MyGame extends FlameGame
     super.render(canvas);
 
     if (enermy.isFocusing) {
-      focusCamera.viewfinder.position = enermy.position;
-      focusCamera.zoomTo(2, duration: 1);
-
+      // 카메라 뷰포인터를 적의 위치로 이동
+      // camera.viewfinder.position = enermy.position;
+      // camera.zoomTo(2, duration: 1);
       // 원의 클리핑 영역 설정
+
       canvas.save();
       Path path = Path()
         ..addOval(Rect.fromCircle(
@@ -207,7 +208,7 @@ class MyGame extends FlameGame
         ..size = Vector2(80, 80)
         ..position = Vector2(size.x - (85 * (i + 1)), 10); // 우측 상단 정렬
       hearts.add(heart);
-      add(heart);
+      world.add(heart);
     }
   }
 
@@ -217,7 +218,7 @@ class MyGame extends FlameGame
       playerHealth--;
 
       if (playerHealth >= 1) {
-        remove(hearts[playerHealth - 1]);
+        world.remove(hearts[playerHealth - 1]);
       }
 
       debugPrint('체력 감소! 남은 체력 : $playerHealth');
@@ -275,26 +276,31 @@ class MyGame extends FlameGame
     _addHearts();
 
     // 가비지 데이터 제거 및 새로운 객체 생성
-    remove(player);
-    remove(enermy);
-    remove(healthBar);
+    world.remove(player);
+    world.remove(enermy);
+    world.remove(healthBar);
 
     player = Player(
       sprite: await loadSprite('player.jpg'),
       position: Vector2(size.x / 4, size.y / 4),
     );
-    add(player);
+    world.add(player);
 
     enermy = Enemy(
       sprite: await loadSprite('enemy.png'),
       position: Vector2(size.x / 2, size.y / 2),
     );
-    add(enermy);
+    world.add(enermy);
 
     healthBar = HealthBar(maxHealth: 100, currentHealth: 100)
       ..position = Vector2(0, size.y - 20) // 화면 하단에 배치
       ..size = Vector2(size.x, 20);
-    add(healthBar);
+    world.add(healthBar);
+
+    camera = CameraComponent.withFixedResolution(
+        width: size.x, height: size.y, world: world);
+    camera.zoomTo(1.0, duration: 0);
+    camera.viewfinder.anchor = Anchor.topLeft;
 
     // 🔹 엔진 다시 실행
     resumeEngine();
