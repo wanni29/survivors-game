@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:survivors_game/components/enemy.dart';
 import 'package:survivors_game/components/health_bar.dart';
 import 'package:survivors_game/components/player.dart';
+import 'package:survivors_game/components/skil/arise_tier_wall.dart';
 import 'package:survivors_game/screens/game_over_screen.dart';
 import 'package:survivors_game/screens/victory_screen.dart';
 
@@ -39,6 +40,7 @@ class MyGame extends FlameGame
   late Player player;
   late Enemy enermy;
   late HealthBar healthBar;
+  late AriseTierWall ariseTierWall;
   Vector2 moveDirection = Vector2.zero();
   List<SpriteComponent> hearts = [];
   int playerHealth = 4; // 플레이어 체력 3
@@ -61,6 +63,13 @@ class MyGame extends FlameGame
             repeat: ImageRepeat.repeat,
             position: Vector2(0, 0));
     add(parallax);
+
+    // ariseTierWall = AriseTierWall(
+    //   sprite: await loadSprite('player.jpg'), // sprite를 전달
+    //   screenHeight: size.y,
+    //   screenWidth: size.x,
+    // );
+    // add(ariseTierWall);
 
     // 캐릭터 추가하기
     player = Player(
