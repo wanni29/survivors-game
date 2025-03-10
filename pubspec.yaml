@@ -15,6 +15,8 @@ dependencies:
   flame_audio: ^2.0.4  # 사운드 패키지
   flame_camera_tools: ^2.0.0 #  카메라 패키지
 
+  google_fonts: ^6.2.1 # 폰트
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

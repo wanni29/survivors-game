@@ -1,11 +1,9 @@
-import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/parallax.dart';
 import 'package:flame_audio/flame_audio.dart';
-import 'package:flame_camera_tools/flame_camera_tools.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:survivors_game/components/enemy.dart';
@@ -13,9 +11,6 @@ import 'package:survivors_game/components/health_bar.dart';
 import 'package:survivors_game/components/player.dart';
 import 'package:survivors_game/screens/game_over_screen.dart';
 import 'package:survivors_game/screens/victory_screen.dart';
-import 'package:survivors_game/test/clone_coding.dart';
-import 'package:survivors_game/test/test_world.dart';
-import 'package:survivors_game/test/camera_example.dart';
 
 // 테스팅용
 // void main() {
@@ -65,7 +60,6 @@ class MyGame extends FlameGame
             baseVelocity: Vector2(50, 0), // 천천히 스크롤되는 배경
             repeat: ImageRepeat.repeat,
             position: Vector2(0, 0));
-
     add(parallax);
 
     // 캐릭터 추가하기
@@ -86,7 +80,7 @@ class MyGame extends FlameGame
     healthBar = HealthBar(maxHealth: 100, currentHealth: 100)
       ..position = Vector2(0, size.y - 20) // 화면 하단에 배치
       ..size = Vector2(size.x, 20); // 전체 가로 너비
-    world.add(healthBar);
+    add(healthBar);
 
     // 하트 UI 추가
     _addHearts();
@@ -162,7 +156,7 @@ class MyGame extends FlameGame
     player.position += moveDirection * 200 * dt;
 
     // 원이 점점 줄어들도록 함
-    if (circleRadius > 500 && enermy.isFocusing) {
+    if (circleRadius > 150 && enermy.isFocusing) {
       circleRadius -= shrinkSpeed * dt;
     }
   }
@@ -287,6 +281,9 @@ class MyGame extends FlameGame
       ..position = Vector2(0, size.y - 20) // 화면 하단에 배치
       ..size = Vector2(size.x, 20);
     add(healthBar);
+
+    circleRadius = 1000;
+    shrinkSpeed = 650;
 
     resumeEngine();
   }

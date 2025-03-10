@@ -4,6 +4,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:survivors_game/components/exlamation_mart.dart';
 import 'package:survivors_game/main.dart';
 import 'dart:ui' as ui;
@@ -51,22 +52,28 @@ class Enemy extends SpriteComponent
 
     // 빨간 느낌표 추가 (기본적으로 숨겨져 있음)
     exclamationMark = ExclamationMark(
-      text: ' ❗️ ',
-      position: Vector2(5, -35),
+      text: '!',
+      position: Vector2(-15, -50),
       textRenderer: TextPaint(
-        style: const TextStyle(
-            color: Colors.red, fontSize: 30, fontWeight: FontWeight.w400),
+        style: GoogleFonts.notoSans(
+          fontSize: 50,
+          fontWeight: FontWeight.w700,
+          color: Colors.red,
+        ),
       ),
     );
     add(exclamationMark);
     exclamationMark.isVisible = false;
 
     questionMark = ExclamationMark(
-      text: ' ❓ ',
-      position: Vector2(5, -35),
+      text: '?',
+      position: Vector2(-15, -50),
       textRenderer: TextPaint(
-        style: const TextStyle(
-            color: Colors.red, fontSize: 30, fontWeight: FontWeight.w400),
+        style: GoogleFonts.notoSans(
+          fontSize: 50,
+          fontWeight: FontWeight.w700,
+          color: Colors.red,
+        ),
       ),
     );
     add(questionMark);
