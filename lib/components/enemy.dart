@@ -39,6 +39,8 @@ class Enemy extends SpriteComponent
 
   @override
   Future<void> onLoad() async {
+    debugMode = true;
+
     // 적도 히트 박스 추가
     add(RectangleHitbox());
 
@@ -84,9 +86,10 @@ class Enemy extends SpriteComponent
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other.runtimeType.toString() == 'SpriteAnimationComponent') {
-      log('여기를 확인해보자 : ${other.runtimeType.toString()} ');
       Vector2 knockbackDirection = (position - other.position).normalized();
       applyKnockback(knockbackDirection);
+    } else {
+      // log('벽과 충돌했어요 ! - enemy 로직 / ${other.runtimeType.toString()}');
     }
     super.onCollisionStart(intersectionPoints, other);
   }

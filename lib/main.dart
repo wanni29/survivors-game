@@ -64,12 +64,12 @@ class MyGame extends FlameGame
             position: Vector2(0, 0));
     add(parallax);
 
-    // ariseTierWall = AriseTierWall(
-    //   sprite: await loadSprite('player.jpg'), // sprite를 전달
-    //   screenHeight: size.y,
-    //   screenWidth: size.x,
-    // );
-    // add(ariseTierWall);
+    ariseTierWall = AriseTierWall(
+      sprite: await loadSprite('player.jpg'), // sprite를 전달
+      screenHeight: size.y,
+      screenWidth: size.x,
+    );
+    add(ariseTierWall);
 
     // 캐릭터 추가하기
     player = Player(
@@ -83,7 +83,7 @@ class MyGame extends FlameGame
       sprite: await loadSprite('enemy.png'),
       position: size / 2,
     );
-    add(enermy);
+    // add(enermy);
 
     // 적 체력바 추가하기
     healthBar = HealthBar(maxHealth: 100, currentHealth: 100)

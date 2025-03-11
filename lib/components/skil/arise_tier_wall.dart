@@ -4,6 +4,9 @@ import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
+import 'package:survivors_game/components/enemy.dart';
+import 'package:survivors_game/components/player.dart';
 import 'package:survivors_game/main.dart';
 
 class AriseTierWall extends SpriteComponent
@@ -23,12 +26,12 @@ class AriseTierWall extends SpriteComponent
 
   List<SpriteComponent> leftWallImages = [];
   List<SpriteComponent> rightWallImages = [];
-  List<RectangleComponent> leftBlackWalls = []; // 왼쪽 검은 벽
-  List<RectangleComponent> rightBlackWalls = []; // 오른쪽 검은 벽
 
   @override
   Future<void> onLoad() async {
     add(RectangleHitbox()); // RectangleHitbox 추가
+
+    debugMode = true;
 
     // 배치 가능한 세로 공간
     double availableHeight = screenHeight - (2 * padding); // 위아래 패딩을 뺀 높이
@@ -39,9 +42,9 @@ class AriseTierWall extends SpriteComponent
       position: Vector2(0, 0), // 벽의 시작 위치 (화면 왼쪽 끝에 배치)
       paint: Paint()..color = Color(0xFF000000), // 검은색 벽
     );
-    leftBlackWalls.add(leftBlackWall);
+    // leftBlackWalls.add(leftBlackWall); // 벽을 리스트에 추가
+    leftBlackWall.add(RectangleHitbox()); // 왼쪽 벽에 Hitbox 추가
     add(leftBlackWall); // 게임에 추가
-    leftBlackWall.add(RectangleHitbox()); // Hitbox 추가
 
     // 왼쪽 벽에 배치할 8개의 이미지를 준비
     for (var i = 0; i < 8; i++) {
@@ -51,9 +54,9 @@ class AriseTierWall extends SpriteComponent
         ..position = Vector2(
             leftBlackWall.position.x + blackWallThickness, // 벽의 끝 부분 뒤에 배치
             padding + i * (availableHeight / 8)); // 세로로 균등 배치, 패딩을 고려
+      playerImage.add(RectangleHitbox());
       leftWallImages.add(playerImage);
       add(playerImage); // 게임에 추가
-      playerImage.add(RectangleHitbox()); // Hitbox 추가
     }
 
     // 오른쪽 벽 뒤에 검은색 벽 배치 (두께는 400)
@@ -62,9 +65,9 @@ class AriseTierWall extends SpriteComponent
       position: Vector2(screenWidth - blackWallThickness, 0), // 화면 오른쪽 끝에 배치
       paint: Paint()..color = Color(0xFF000000), // 검은색 벽
     );
-    rightBlackWalls.add(rightBlackWall);
+    rightBlackWall.add(RectangleHitbox()); // 오른쪽 벽에 Hitbox 추가
+    // rightBlackWalls.add(rightBlackWall); // 벽을 리스트에 추가
     add(rightBlackWall); // 게임에 추가
-    rightBlackWall.add(RectangleHitbox()); // Hitbox 추가
 
     // 오른쪽 벽에 배치할 8개의 이미지를 준비
     for (int i = 0; i < 8; i++) {
@@ -74,16 +77,28 @@ class AriseTierWall extends SpriteComponent
         ..position = Vector2(
             rightBlackWall.position.x - wallSize.x, // 벽의 끝 부분 뒤에 배치
             padding + i * (availableHeight / 8)); // 세로로 균등 배치, 패딩을 고려한 위치 계산
+      playerImage.add(RectangleHitbox());
       rightWallImages.add(playerImage);
       add(playerImage); // 게임에 추가
-      playerImage.add(RectangleHitbox()); // Hitbox 추가
     }
   }
 
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
+    log('충돌 시작 시점 로그: ${other.runtimeType.toString()}');
+    log('충돌 시작 시점에서의 객체 정보: ${other.toString()}');
+
+    log('충돌 감지 준비 완료: ${other.runtimeType}');
+
+    debugPrint('충돌감지 - arise_tier_wall');
+    print('충돌감지 - arise_tier_wall');
+
+    if (other is Player) {
+      debugPrint('충돌감지 - arise_tier_wall');
+      print('충돌감지 - arise_tier_wall');
+    }
+
     super.onCollisionStart(intersectionPoints, other);
-    log('벽과의 충돌 로그 : ${other.runtimeType.toString()} ');
   }
 }
