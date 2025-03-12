@@ -10,13 +10,15 @@ import 'package:survivors_game/components/enemy.dart';
 import 'package:survivors_game/components/health_bar.dart';
 import 'package:survivors_game/components/player.dart';
 import 'package:survivors_game/components/skil/arise_tier_wall.dart';
+import 'package:survivors_game/components/skil/arise_tier_wall_alive.dart';
 import 'package:survivors_game/screens/game_over_screen.dart';
 import 'package:survivors_game/screens/victory_screen.dart';
+import 'package:survivors_game/test/collision_example.dart';
 
 // 테스팅용
 // void main() {
 //   runApp(GameWidget(
-//     game: TestWorld(),
+//     game: CollisionExample(),
 //   ));
 // }
 
@@ -64,12 +66,19 @@ class MyGame extends FlameGame
             position: Vector2(0, 0));
     add(parallax);
 
-    ariseTierWall = AriseTierWall(
-      sprite: await loadSprite('player.jpg'), // sprite를 전달
-      screenHeight: size.y,
-      screenWidth: size.x,
+    // ariseTierWall = AriseTierWall(
+    //   sprite: await loadSprite('player.jpg'), // sprite를 전달
+    //   screenHeight: size.y,
+    //   screenWidth: size.x,
+    // );
+    // add(ariseTierWall);
+
+    add(
+      AriseTierWallAlive(
+        position: Vector2(0, 0),
+        size: Vector2(200, size.y),
+      ), // 왼쪽 벽
     );
-    add(ariseTierWall);
 
     // 캐릭터 추가하기
     player = Player(
