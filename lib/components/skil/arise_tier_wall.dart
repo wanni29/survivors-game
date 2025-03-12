@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -17,6 +16,7 @@ class AriseTierWall extends SpriteComponent
     required this.screenWidth,
   });
 
+  @override
   final Sprite sprite;
   final double screenWidth;
   final double screenHeight;
@@ -83,6 +83,8 @@ class AriseTierWall extends SpriteComponent
     }
   }
 
+  // 20250312 23:45i arise_tier_wall 에서 충돌감지가 되지 않음
+  // 샘플링 시작해서 실험 후 재 적용 해볼것
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
