@@ -39,8 +39,6 @@ class Enemy extends SpriteComponent
 
   @override
   Future<void> onLoad() async {
-    debugMode = true;
-
     // 적도 히트 박스 추가
     add(RectangleHitbox());
 

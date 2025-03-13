@@ -4,101 +4,83 @@ import 'dart:developer';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-import 'package:survivors_game/components/enemy.dart';
-import 'package:survivors_game/components/player.dart';
 import 'package:survivors_game/main.dart';
 
-class AriseTierWall extends SpriteComponent
+class AriseTierWall extends RectangleComponent
     with CollisionCallbacks, HasGameRef<MyGame> {
   AriseTierWall({
-    required this.sprite,
-    required this.screenHeight,
-    required this.screenWidth,
-  });
+    required Vector2 position,
+    required Vector2 size,
+    required this.underTier,
+    this.shouladAddMoreWalls = false,
+  }) : super(
+          position: position,
+          size: size,
+          paint: Paint()..color = Colors.white,
+        );
 
-  @override
-  final Sprite sprite;
-  final double screenWidth;
-  final double screenHeight;
-  final Vector2 wallSize = Vector2(100, 100);
-  final double blackWallThickness = 400.0; // 벽의 두께 (400)
-  final double padding = 20.0; // 위아래 패딩 설정
-
-  List<SpriteComponent> leftWallImages = [];
-  List<SpriteComponent> rightWallImages = [];
+  final bool shouladAddMoreWalls;
+  final String underTier;
 
   @override
   Future<void> onLoad() async {
-    add(RectangleHitbox()); // RectangleHitbox 추가
+    await super.onLoad();
+    add(RectangleHitbox()..collisionType = CollisionType.passive);
 
-    debugMode = true;
+    final gameWidth = gameRef.size.x;
 
-    // 배치 가능한 세로 공간
-    double availableHeight = screenHeight - (2 * padding); // 위아래 패딩을 뺀 높이
-
-    // 왼쪽 벽 뒤에 검은색 벽 배치 (두께는 400)
-    final leftBlackWall = RectangleComponent(
-      size: Vector2(blackWallThickness, screenHeight), // 벽의 두께는 400, 높이는 화면 크기
-      position: Vector2(0, 0), // 벽의 시작 위치 (화면 왼쪽 끝에 배치)
-      paint: Paint()..color = Color(0xFF000000), // 검은색 벽
-    );
-    // leftBlackWalls.add(leftBlackWall); // 벽을 리스트에 추가
-    leftBlackWall.add(RectangleHitbox()); // 왼쪽 벽에 Hitbox 추가
-    add(leftBlackWall); // 게임에 추가
-
-    // 왼쪽 벽에 배치할 8개의 이미지를 준비
-    for (var i = 0; i < 8; i++) {
-      final playerImage = SpriteComponent()
-        ..sprite = sprite // 전달받은 sprite를 사용
-        ..size = wallSize
-        ..position = Vector2(
-            leftBlackWall.position.x + blackWallThickness, // 벽의 끝 부분 뒤에 배치
-            padding + i * (availableHeight / 8)); // 세로로 균등 배치, 패딩을 고려
-      playerImage.add(RectangleHitbox());
-      leftWallImages.add(playerImage);
-      add(playerImage); // 게임에 추가
+    if (shouladAddMoreWalls) {
+      // 화면 오른쪽 끝에 벽 추가
+      final gameWidth = gameRef.size.x; // 게임 화면의 너비
+      add(AriseTierWall(
+          position: Vector2(gameWidth - size.x, 0),
+          size: size,
+          underTier: underTier));
     }
 
-    // 오른쪽 벽 뒤에 검은색 벽 배치 (두께는 400)
-    final rightBlackWall = RectangleComponent(
-      size: Vector2(blackWallThickness, screenHeight), // 벽의 두께는 400, 높이는 화면 크기
-      position: Vector2(screenWidth - blackWallThickness, 0), // 화면 오른쪽 끝에 배치
-      paint: Paint()..color = Color(0xFF000000), // 검은색 벽
-    );
-    rightBlackWall.add(RectangleHitbox()); // 오른쪽 벽에 Hitbox 추가
-    // rightBlackWalls.add(rightBlackWall); // 벽을 리스트에 추가
-    add(rightBlackWall); // 게임에 추가
+    // 왼쪽과 오른쪽 벽 앞에 플레이어 8개 세로로 나열
+    _addUnderTier(Vector2(position.x + size.x, 0)); // 왼쪽 벽 앞
+    _addUnderTier(Vector2(gameWidth - size.x - 100, 0)); // 오른쪽 벽 앞
+  }
 
-    // 오른쪽 벽에 배치할 8개의 이미지를 준비
+  void _addUnderTier(Vector2 startPosition) {
     for (int i = 0; i < 8; i++) {
-      final playerImage = SpriteComponent()
-        ..sprite = sprite // 전달받은 sprite를 사용
-        ..size = wallSize
-        ..position = Vector2(
-            rightBlackWall.position.x - wallSize.x, // 벽의 끝 부분 뒤에 배치
-            padding + i * (availableHeight / 8)); // 세로로 균등 배치, 패딩을 고려한 위치 계산
-      playerImage.add(RectangleHitbox());
-      rightWallImages.add(playerImage);
-      add(playerImage); // 게임에 추가
+      add(UnderTier(
+          position: Vector2(startPosition.x, i * 100.0), underTier: underTier));
     }
   }
 
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
-    log('충돌 시작 시점 로그: ${other.runtimeType.toString()}');
-    log('충돌 시작 시점에서의 객체 정보: ${other.toString()}');
-
-    log('충돌 감지 준비 완료: ${other.runtimeType}');
-
-    debugPrint('충돌감지 - arise_tier_wall');
-    print('충돌감지 - arise_tier_wall');
-
-    if (other is Player) {
-      debugPrint('충돌감지 - arise_tier_wall');
-      print('충돌감지 - arise_tier_wall');
-    }
-
     super.onCollisionStart(intersectionPoints, other);
+    log('충돌 지점: $intersectionPoints - AriseTierWall Collision here!');
+  }
+}
+
+class UnderTier extends SpriteComponent
+    with CollisionCallbacks, HasGameRef<MyGame> {
+  final String underTier;
+
+  UnderTier({
+    required Vector2 position,
+    required this.underTier,
+  }) : super(
+          position: position,
+          size: Vector2(100, 100), // 플레이어 크기
+        );
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    sprite = await gameRef.loadSprite(underTier);
+    add(RectangleHitbox()..collisionType = CollisionType.passive);
+  }
+
+  @override
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollisionStart(intersectionPoints, other);
+    log('충돌 지점: $intersectionPoints - UnderTier Collision here!');
   }
 }

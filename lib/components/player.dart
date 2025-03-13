@@ -21,8 +21,6 @@ class Player extends SpriteComponent
 
   @override
   Future<void> onLoad() async {
-    debugMode = true;
-
     // 충돌 판정을 위한 히트박스 추가
     add(RectangleHitbox());
 
@@ -95,8 +93,6 @@ class Player extends SpriteComponent
 
         block();
       }
-    } else {
-      log('벽과 충돌했어요 -  player 로직 / ${other.runtimeType.toString()}');
     }
     super.onCollisionStart(intersectionPoints, other);
   }

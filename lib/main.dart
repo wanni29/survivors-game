@@ -10,10 +10,8 @@ import 'package:survivors_game/components/enemy.dart';
 import 'package:survivors_game/components/health_bar.dart';
 import 'package:survivors_game/components/player.dart';
 import 'package:survivors_game/components/skil/arise_tier_wall.dart';
-import 'package:survivors_game/components/skil/arise_tier_wall_alive.dart';
 import 'package:survivors_game/screens/game_over_screen.dart';
 import 'package:survivors_game/screens/victory_screen.dart';
-import 'package:survivors_game/test/collision_example.dart';
 
 // 테스팅용
 // void main() {
@@ -52,6 +50,8 @@ class MyGame extends FlameGame
   double circleRadius = 1000; // 초기 원의 반지름
   double shrinkSpeed = 650; // 원이 줄어드는 속도
 
+  final String underTier = 'player.jpg';
+
   @override
   Future<void> onLoad() async {
     // 사운드 캐시 다운로드 시키기
@@ -66,18 +66,12 @@ class MyGame extends FlameGame
             position: Vector2(0, 0));
     add(parallax);
 
-    // ariseTierWall = AriseTierWall(
-    //   sprite: await loadSprite('player.jpg'), // sprite를 전달
-    //   screenHeight: size.y,
-    //   screenWidth: size.x,
-    // );
-    // add(ariseTierWall);
-
     add(
-      AriseTierWallAlive(
-        position: Vector2(0, 0),
-        size: Vector2(200, size.y),
-      ), // 왼쪽 벽
+      AriseTierWall(
+          position: Vector2(0, 0),
+          size: Vector2(500, size.y),
+          underTier: underTier,
+          shouladAddMoreWalls: true),
     );
 
     // 캐릭터 추가하기
@@ -92,7 +86,7 @@ class MyGame extends FlameGame
       sprite: await loadSprite('enemy.png'),
       position: size / 2,
     );
-    // add(enermy);
+    add(enermy);
 
     // 적 체력바 추가하기
     healthBar = HealthBar(maxHealth: 100, currentHealth: 100)
