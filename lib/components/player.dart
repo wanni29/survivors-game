@@ -24,6 +24,8 @@ class Player extends SpriteComponent
     // 충돌 판정을 위한 히트박스 추가
     add(RectangleHitbox());
 
+    debugMode = true;
+
     // 공격 애니메이션 불러오기
     final hitSpriteSheet = await gameRef.images.load('hit.png');
     attackAnimation = SpriteAnimation.fromFrameData(
