@@ -77,7 +77,7 @@ class MyGame extends FlameGame
     // 캐릭터 추가하기
     player = Player(
       sprite: await loadSprite('player.jpg'),
-      position: size / 4,
+      position: size / 2,
     );
     add(player);
 
@@ -86,7 +86,7 @@ class MyGame extends FlameGame
       sprite: await loadSprite('enemy.png'),
       position: size / 2,
     );
-    add(enermy);
+    // add(enermy);
 
     // 적 체력바 추가하기
     healthBar = HealthBar(maxHealth: 100, currentHealth: 100)

@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import 'package:survivors_game/components/player.dart';
 import 'package:survivors_game/main.dart';
 
 class AriseTierWall extends RectangleComponent
@@ -21,11 +22,12 @@ class AriseTierWall extends RectangleComponent
 
   final bool shouladAddMoreWalls;
   final String underTier;
+  bool isCollidingWithWall = false; // 벽과 충돌 여부를 추적하는 변수
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    add(RectangleHitbox()..collisionType = CollisionType.passive);
+    add(RectangleHitbox()..collisionType = CollisionType.active);
 
     final gameWidth = gameRef.size.x;
 
@@ -55,12 +57,38 @@ class AriseTierWall extends RectangleComponent
       Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
     log('충돌 지점: $intersectionPoints - AriseTierWall Collision here!');
+    if (other is Player) {
+      // 벽과 충돌 시 moveDirection을 0으로 설정
+      gameRef.moveDirection = Vector2.zero();
+      isCollidingWithWall = true; // 충돌 상태로 변경
+    }
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    super.onCollisionEnd(other);
+
+    if (other is Player) {
+      // 벽과 충돌이 끝나면 이동 가능
+      isCollidingWithWall = false;
+    }
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    // 벽과 충돌 중이면 계속해서 이동을 멈추게 함
+    if (isCollidingWithWall) {
+      gameRef.moveDirection = Vector2.zero();
+    }
   }
 }
 
 class UnderTier extends SpriteComponent
     with CollisionCallbacks, HasGameRef<MyGame> {
   final String underTier;
+  bool isCollidingWithWall = false; // 벽과 충돌 여부를 추적하는 변수
 
   UnderTier({
     required Vector2 position,
@@ -74,13 +102,38 @@ class UnderTier extends SpriteComponent
   Future<void> onLoad() async {
     await super.onLoad();
     sprite = await gameRef.loadSprite(underTier);
-    add(RectangleHitbox()..collisionType = CollisionType.passive);
+    add(RectangleHitbox()..collisionType = CollisionType.active);
   }
 
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
-    log('충돌 지점: $intersectionPoints - UnderTier Collision here!');
+    log('충돌 지점: $intersectionPoints - AriseTierWall Collision here!');
+    if (other is Player) {
+      // 벽과 충돌 시 moveDirection을 0으로 설정
+      gameRef.moveDirection = Vector2.zero();
+      isCollidingWithWall = true; // 충돌 상태로 변경
+    }
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    super.onCollisionEnd(other);
+
+    if (other is Player) {
+      // 벽과 충돌이 끝나면 이동 가능
+      isCollidingWithWall = false;
+    }
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    // 벽과 충돌 중이면 계속해서 이동을 멈추게 함
+    if (isCollidingWithWall) {
+      gameRef.moveDirection = Vector2.zero();
+    }
   }
 }
