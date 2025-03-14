@@ -86,8 +86,17 @@ class AriseTierWall extends RectangleComponent
   @override
   void onCollisionEnd(PositionComponent other) {
     if (other is Player) {
-      collisionLeft = false; // 충돌이 끝났을 때 왼쪽 충돌 해제
-      collisionRight = false; // 충돌이 끝났을 때 오른쪽 충돌 해제
+      log('충돌 해제 발생! ${other.position}');
+
+      // 여기서 플레이어의 위치를 체크해보고, 벽에서 벗어났는지 확인
+      if (other.position.x > 550) {
+        collisionLeft = false;
+      }
+      if (other.position.x < 970) {
+        collisionRight = false;
+      }
+
+      log('collisionLeft -> $collisionLeft, collisionRight -> $collisionRight');
     }
     super.onCollisionEnd(other);
   }
