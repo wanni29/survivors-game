@@ -168,7 +168,7 @@ class MyGame extends FlameGame
   void update(double dt) {
     super.update(dt);
     // 캐릭터 이동 속도
-    if (moveDirection.x != 0) {
+    if (moveDirection != Vector2.zero()) {
       player.position += moveDirection * 200 * dt;
     }
 

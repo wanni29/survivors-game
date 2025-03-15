@@ -30,6 +30,8 @@ class AriseTierWall extends RectangleComponent
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+
+    debugMode = true;
     add(RectangleHitbox()..collisionType = CollisionType.active);
 
     final gameWidth = gameRef.size.x;
@@ -39,14 +41,16 @@ class AriseTierWall extends RectangleComponent
 
     if (shouladAddMoreWalls) {
       // 화면 오른쪽 끝에 벽 추가
-      final gameWidth = gameRef.size.x; // 게임 화면의 너비
-      add(AriseTierWall(
+
+      final rightWall = AriseTierWall(
           position: Vector2(gameWidth - size.x, 0),
           size: size,
-          underTier: underTier));
+          underTier: underTier);
 
-      // 추가된 벽의 좌표와 크기도 로그로 출력
-      log('추가된 벽의 위치: ${gameWidth - size.x}, 크기: ${size}');
+      // 벽에 히트박스를 추가하여 충돌을 감지하도록 설정
+      rightWall.add(RectangleHitbox()..collisionType = CollisionType.active);
+
+      add(rightWall);
     }
 
     // 왼쪽과 오른쪽 벽 앞에 플레이어 8개 세로로 나열
@@ -74,9 +78,9 @@ class AriseTierWall extends RectangleComponent
         log('충돌 로직 시작 - 왼쪽 벽에 충돌 => 왼쪽으로 이동 불가능!');
       }
       // 오른쪽 벽에 충돌 여부 확인
-      if (intersectionPoints.any((point) => point.x >= 970)) {
+      final gameWidth = gameRef.size.x;
+      if (intersectionPoints.any((point) => point.x >= gameWidth - size.x)) {
         collisionRight = true; // 오른쪽 벽에 충돌 시
-        log('collisionRight -> $collisionRight');
         log('충돌 로직 시작 - 오른쪽 벽에 충돌 => 오른쪽으로 이동 불가능!');
       }
     }
@@ -86,13 +90,15 @@ class AriseTierWall extends RectangleComponent
   @override
   void onCollisionEnd(PositionComponent other) {
     if (other is Player) {
+      collisionLeft = false; // 충돌이 끝났을 때 왼쪽 충돌 해제
+      collisionRight = false; // 충돌이 끝났을 때 오른쪽 충돌 해제
       log('충돌 해제 발생! ${other.position}');
 
       // 여기서 플레이어의 위치를 체크해보고, 벽에서 벗어났는지 확인
       if (other.position.x > 550) {
         collisionLeft = false;
       }
-      if (other.position.x < 970) {
+      if (other.position.x < 930) {
         collisionRight = false;
       }
 
