@@ -71,7 +71,7 @@ class MyGame extends FlameGame
           position: Vector2(0, 0),
           size: Vector2(500, size.y),
           underTier: underTier,
-          shouladAddMoreWalls: true),
+          shouldAddMoreWalls: true),
     );
 
     // 캐릭터 추가하기
