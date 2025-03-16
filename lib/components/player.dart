@@ -6,6 +6,7 @@ import 'package:flame/effects.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:survivors_game/components/enemy.dart';
+import 'package:survivors_game/components/skil/arise_tier_wall.dart';
 import 'package:survivors_game/main.dart';
 
 class Player extends SpriteComponent
@@ -15,6 +16,9 @@ class Player extends SpriteComponent
   bool isAttacking = false; // 공격 중인지 확인하는 변수
   late SpriteAnimation attackAnimation;
   late SpriteAnimation blocakAnimation;
+
+  bool canMoveLeft = true;
+  bool canMoveRight = true;
 
   Player({required Sprite sprite, required Vector2 position})
       : super(sprite: sprite, size: Vector2(70, 70), position: position);
@@ -97,9 +101,32 @@ class Player extends SpriteComponent
         block();
       }
     } else {
-      log('플레이어 쪽에서는 벽과의 충돌이 감지가 되요 ! ');
+      if (other is AriseTierWall || other is UnderTier) {
+        log('플레이어가 벽과 충돌!');
+
+        // 충돌한 방향을 판별
+        if (position.x > other.position.x) {
+          // 왼쪽에서 충돌 -> 오른쪽 이동만 가능
+          canMoveLeft = false;
+        } else if (position.x < other.position.x) {
+          // 오른쪽에서 충돌 -> 왼쪽 이동만 가능
+          canMoveRight = false;
+        }
+      }
     }
     super.onCollisionStart(intersectionPoints, other);
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    if (other is AriseTierWall || other is UnderTier) {
+      log('플레이어가 벽에서 벗어남!');
+
+      // 벽과의 충돌이 끝나면 다시 모든 방향 이동 가능
+      canMoveLeft = true;
+      canMoveRight = true;
+    }
+    super.onCollisionEnd(other);
   }
 
   void attack() {

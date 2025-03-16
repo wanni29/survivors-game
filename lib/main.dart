@@ -113,12 +113,12 @@ class MyGame extends FlameGame
     double moveSpeed = 1.65;
 
     if (keysPressed.contains(LogicalKeyboardKey.arrowLeft) &&
-        !ariseTierWall.collisionLeft) {
+        player.canMoveLeft) {
       moveDirection.x = -moveSpeed;
     }
 
     if (keysPressed.contains(LogicalKeyboardKey.arrowRight) &&
-        !ariseTierWall.collisionRight) {
+        player.canMoveRight) {
       moveDirection.x = moveSpeed;
     }
 
