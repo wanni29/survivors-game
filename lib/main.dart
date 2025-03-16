@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -66,18 +68,17 @@ class MyGame extends FlameGame
             position: Vector2(0, 0));
     add(parallax);
 
-    add(
-      AriseTierWall(
-          position: Vector2(0, 0),
-          size: Vector2(500, size.y),
-          underTier: underTier,
-          shouldAddMoreWalls: true),
-    );
+    ariseTierWall = AriseTierWall(
+        position: Vector2(0, 0),
+        size: Vector2(500, size.y),
+        underTier: underTier,
+        shouldAddMoreWalls: true);
+    add(ariseTierWall);
 
     // 캐릭터 추가하기
     player = Player(
       sprite: await loadSprite('player.jpg'),
-      position: size / 4,
+      position: size / 2,
     );
     add(player);
 
@@ -86,7 +87,7 @@ class MyGame extends FlameGame
       sprite: await loadSprite('enemy.png'),
       position: size / 2,
     );
-    add(enermy);
+    // add(enermy);
 
     // 적 체력바 추가하기
     healthBar = HealthBar(maxHealth: 100, currentHealth: 100)
@@ -111,11 +112,13 @@ class MyGame extends FlameGame
     moveDirection = Vector2.zero();
     double moveSpeed = 1.65;
 
-    if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
+    if (keysPressed.contains(LogicalKeyboardKey.arrowLeft) &&
+        !ariseTierWall.collisionLeft) {
       moveDirection.x = -moveSpeed;
     }
 
-    if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
+    if (keysPressed.contains(LogicalKeyboardKey.arrowRight) &&
+        !ariseTierWall.collisionRight) {
       moveDirection.x = moveSpeed;
     }
 
@@ -165,7 +168,9 @@ class MyGame extends FlameGame
   void update(double dt) {
     super.update(dt);
     // 캐릭터 이동 속도
-    player.position += moveDirection * 200 * dt;
+    if (moveDirection != Vector2.zero()) {
+      player.position += moveDirection * 200 * dt;
+    }
 
     // 원이 점점 줄어들도록 함
     if (circleRadius > 150 && enermy.isFocusing) {
@@ -262,6 +267,10 @@ class MyGame extends FlameGame
         onTick: () {
           overlays.remove('RedFlash');
         }));
+  }
+
+  void setMoveDirection(Vector2 newDirection) {
+    moveDirection = newDirection;
   }
 
   void resetGame() async {

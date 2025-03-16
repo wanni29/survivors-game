@@ -30,7 +30,7 @@ class AriseTierWall extends RectangleComponent
     await super.onLoad();
 
     debugMode = true;
-    add(RectangleHitbox()..collisionType = CollisionType.passive);
+    add(RectangleHitbox()..collisionType = CollisionType.active);
 
     final gameWidth = gameRef.size.x;
 
@@ -52,16 +52,16 @@ class AriseTierWall extends RectangleComponent
     }
 
     // 왼쪽과 오른쪽 벽 앞에 플레이어 8개 세로로 나열
-    _addUnderTier(Vector2(position.x + size.x, 0)); // 왼쪽 벽 앞
-    _addUnderTier(Vector2(gameWidth - size.x - 100, 0)); // 오른쪽 벽 앞
+    // _addUnderTier(Vector2(position.x + size.x, 0)); // 왼쪽 벽 앞
+    // _addUnderTier(Vector2(gameWidth - size.x - 100, 0)); // 오른쪽 벽 앞
   }
 
-  void _addUnderTier(Vector2 startPosition) {
-    for (int i = 0; i < 8; i++) {
-      add(UnderTier(
-          position: Vector2(startPosition.x, i * 100.0), underTier: underTier));
-    }
-  }
+  // void _addUnderTier(Vector2 startPosition) {
+  //   for (int i = 0; i < 8; i++) {
+  //     add(UnderTier(
+  //         position: Vector2(startPosition.x, i * 100.0), underTier: underTier));
+  //   }
+  // }
 
   @override
   void onCollisionStart(
@@ -106,29 +106,29 @@ class AriseTierWall extends RectangleComponent
   }
 }
 
-class UnderTier extends SpriteComponent
-    with CollisionCallbacks, HasGameRef<MyGame> {
-  final String underTier;
-  bool isCollidingWithWall = false; // 벽과 충돌 여부를 추적하는 변수
+// class UnderTier extends SpriteComponent
+//     with CollisionCallbacks, HasGameRef<MyGame> {
+//   final String underTier;
+//   bool isCollidingWithWall = false; // 벽과 충돌 여부를 추적하는 변수
 
-  UnderTier({
-    required Vector2 position,
-    required this.underTier,
-  }) : super(
-          position: position,
-          size: Vector2(100, 100), // 플레이어 크기
-        );
+//   UnderTier({
+//     required Vector2 position,
+//     required this.underTier,
+//   }) : super(
+//           position: position,
+//           size: Vector2(100, 100), // 플레이어 크기
+//         );
 
-  @override
-  Future<void> onLoad() async {
-    await super.onLoad();
-    sprite = await gameRef.loadSprite(underTier);
-    add(RectangleHitbox()..collisionType = CollisionType.active);
-  }
+//   @override
+//   Future<void> onLoad() async {
+//     await super.onLoad();
+//     sprite = await gameRef.loadSprite(underTier);
+//     add(RectangleHitbox()..collisionType = CollisionType.active);
+//   }
 
-  @override
-  void onCollisionStart(
-      Set<Vector2> intersectionPoints, PositionComponent other) {
-    super.onCollisionStart(intersectionPoints, other);
-  }
-}
+//   @override
+//   void onCollisionStart(
+//       Set<Vector2> intersectionPoints, PositionComponent other) {
+//     super.onCollisionStart(intersectionPoints, other);
+//   }
+// }
