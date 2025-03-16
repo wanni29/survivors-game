@@ -13,19 +13,17 @@ class AriseTierWall extends RectangleComponent
     required Vector2 position,
     required Vector2 size,
     required this.underTier,
-    this.shouladAddMoreWalls = false,
+    this.shouldAddMoreWalls = false,
   }) : super(
           position: position,
           size: size,
           paint: Paint()..color = Colors.white,
         );
 
-  final bool shouladAddMoreWalls;
+  final bool shouldAddMoreWalls;
   final String underTier;
-  bool isCollidingWithWall = false; // 벽과 충돌 여부를 추적하는 변수
-
-  bool collisionLeft = false; // 왼쪽 벽과 충돌 여부
-  bool collisionRight = false; // 오른쪽 벽과 충돌 여부
+  bool collisionLeft = false;
+  bool collisionRight = false;
 
   @override
   Future<void> onLoad() async {
@@ -39,7 +37,7 @@ class AriseTierWall extends RectangleComponent
     // 벽의 좌표와 크기 로그 출력
     log('벽의 위치: ${position}, 벽의 크기: ${size}');
 
-    if (shouladAddMoreWalls) {
+    if (shouldAddMoreWalls) {
       // 화면 오른쪽 끝에 벽 추가
 
       final rightWall = AriseTierWall(
@@ -50,7 +48,7 @@ class AriseTierWall extends RectangleComponent
       // 벽에 히트박스를 추가하여 충돌을 감지하도록 설정
       rightWall.add(RectangleHitbox()..collisionType = CollisionType.active);
 
-      add(rightWall);
+      gameRef.add(rightWall);
     }
 
     // 왼쪽과 오른쪽 벽 앞에 플레이어 8개 세로로 나열
