@@ -6,7 +6,6 @@ import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:survivors_game/components/exlamation_mart.dart';
-import 'package:survivors_game/components/skil/arise_tier_wall.dart';
 import 'package:survivors_game/main.dart';
 import 'dart:ui' as ui;
 
@@ -88,13 +87,7 @@ class Enemy extends SpriteComponent
       Vector2 knockbackDirection = (position - other.position).normalized();
       applyKnockback(knockbackDirection);
     } else {
-      if (other is UnderTier) {
-        log('enemy로직 에서 충돌 발생');
-      }
-
-      if (other is AriseTierWall) {
-        log('enemy로직 에서 충돌 발생');
-      }
+      // log('벽과 충돌했어요 ! - enemy 로직 / ${other.runtimeType.toString()}');
     }
     super.onCollisionStart(intersectionPoints, other);
   }

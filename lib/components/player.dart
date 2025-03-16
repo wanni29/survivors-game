@@ -102,8 +102,6 @@ class Player extends SpriteComponent
       }
     } else {
       if (other is AriseTierWall || other is UnderTier) {
-        log('플레이어가 벽과 충돌!');
-
         // 충돌한 방향을 판별
         if (position.x > other.position.x) {
           // 왼쪽에서 충돌 -> 오른쪽 이동만 가능
@@ -120,8 +118,6 @@ class Player extends SpriteComponent
   @override
   void onCollisionEnd(PositionComponent other) {
     if (other is AriseTierWall || other is UnderTier) {
-      log('플레이어가 벽에서 벗어남!');
-
       // 벽과의 충돌이 끝나면 다시 모든 방향 이동 가능
       canMoveLeft = true;
       canMoveRight = true;
