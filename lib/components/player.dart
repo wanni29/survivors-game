@@ -117,8 +117,7 @@ class Player extends SpriteComponent
 
   @override
   void onCollisionEnd(PositionComponent other) {
-    if (other is AriseTierWall || other is UnderTier) {
-      // 벽과의 충돌이 끝나면 다시 모든 방향 이동 가능
+    if (other is AriseTierWall) {
       canMoveLeft = true;
       canMoveRight = true;
     }
